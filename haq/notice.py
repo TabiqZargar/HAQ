@@ -23,14 +23,17 @@ _AMOUNT_PATTERN = re.compile(
 )
 
 _REFERENCE_PATTERN = re.compile(
-    r"\b(?:Ref(?:erence)?|Notice|Case|File)\s*(?:No\.?|Number|#)?\s*[:\-]?\s*"
-    r"([A-Z0-9][A-Z0-9./_-]{2,})",
+    r"\b(?:"
+    r"Ref(?:erence)?\s*(?:(?:No\.?|Number|#)\s*[:\-]?|[:\-])\s*"
+    r"|(?:Notice|Case|File)\s*(?:No\.?|Number|#)\s*[:\-]?\s*"
+    r")([A-Z0-9][A-Z0-9./_-]{2,})\b",
     re.I,
 )
 
 _PARTY_PATTERN = re.compile(
     r"^\s*(?:To|From|Landlord|Tenant|Owner|Tenant\s+Name|Landlord\s+Name|"
-    r"Name\s+of\s+(?:the\s+)?(?:Tenant|Landlord))\s*[:\-,]\s*(.+?)\s*$",
+    r"Name\s+of\s+(?:the\s+)?(?:Tenant|Landlord))\s*"
+    r"(?:[:\-,]\s*|\n\s*)([^\n]+?)\s*$",
     re.I | re.M,
 )
 
@@ -40,6 +43,7 @@ _DEADLINE_PATTERNS = (
         r"not\s+later\s+than|latest\s+by)\s+(?:the\s+)?"
         r"(?:\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|"
         r"eleven|twelve|fifteen|twenty|thirty|forty|sixty|ninety)\s+"
+        r"(?:\s*\(\d{1,3}\))?\s+"
         r"(?:working\s+)?(?:days?|weeks?|months?|years?)"
         r"(?:\s+(?:of|from|after)\s+[^.;\n]{1,100})?",
         re.I,
@@ -55,6 +59,12 @@ _DEADLINE_PATTERNS = (
         rf"\b(?:by|on\s+or\s+before|no\s+later\s+than|not\s+later\s+than|"
         rf"latest\s+by|before)\s+(?:the\s+)?"
         rf"\d{{1,2}}(?:st|nd|rd|th)?\s+(?:{_MONTHS})\.?,?\s+\d{{4}}\b",
+        re.I,
+    ),
+    re.compile(
+        r"\b(?:by|on\s+or\s+before|no\s+later\s+than|not\s+later\s+than|"
+        r"latest\s+by|before)\s+(?:the\s+)?"
+        r"(?:\d{1,2}[./-]\d{1,2}[./-]\d{2,4}|\d{4}-\d{1,2}-\d{1,2})\b",
         re.I,
     ),
 )
