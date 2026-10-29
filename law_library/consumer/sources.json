@@ -1,0 +1,94 @@
+[
+  {
+    "id": "cp-2019-s2-7-consumer",
+    "title": "Consumer Protection Act, 2019",
+    "section": "Section 2(7) - Definition of consumer",
+    "jurisdiction": "India",
+    "source_url": "https://consumeraffairs.gov.in/public/upload/files/CP%20Act%202019_1732700731.pdf",
+    "collection_date": "2026-10-29",
+    "verification_status": "verified_official",
+    "category": "consumer",
+    "source_type": "statute",
+    "topic_tags": [
+      "consumer definition",
+      "who is a consumer",
+      "goods or services",
+      "commercial purpose",
+      "online purchase",
+      "beneficiary",
+      "self employment"
+    ],
+    "text": "2. (7) \"consumer\" means any person who— (i) buys any goods for a consideration which has been paid or promised or partly paid and partly promised, or under any system of deferred payment and includes any user of such goods other than the person who buys such goods for consideration paid or promised or partly paid or partly promised, or under any system of deferred payment, when such use is made with the approval of such person, but does not include a person who obtains such goods for resale or for any commercial purpose; or (ii) hires or avails of any service for a consideration which has been paid or promised or partly paid and partly promised, or under any system of deferred payment and includes any beneficiary of such service other than the person who hires or avails of the services for consideration paid or promised, or partly paid and partly promised, or under any system of deferred payment, when such services are availed of with the approval of the first mentioned person, but does not include a person who avails of such service for any commercial purpose. Explanation.—For the purposes of this clause,— (a) the expression \"commercial purpose\" does not include use by a person of goods bought and used by him exclusively for the purpose of earning his livelihood, by means of self-employment; (b) the expressions \"buys any goods\" and \"hires or avails any services\" includes offline or online transactions through electronic means or by teleshopping or direct selling or multi-level marketing;",
+    "plain_summary": "The Act defines a consumer by reference to buying goods or hiring or availing services for consideration. It includes certain users and beneficiaries, but excludes goods obtained for resale or commercial purpose and services availed for a commercial purpose. The explanation says self-employment use can fall outside \"commercial purpose\" and that online and offline transactions are included.",
+    "applicability_note": "The definition is fact-specific. Whether a person is a consumer depends on the transaction and purpose."
+  },
+  {
+    "id": "cp-2019-s2-11-deficiency",
+    "title": "Consumer Protection Act, 2019",
+    "section": "Section 2(11) - Definition of deficiency",
+    "jurisdiction": "India",
+    "source_url": "https://consumeraffairs.gov.in/public/upload/files/CP%20Act%202019_1732700731.pdf",
+    "collection_date": "2026-10-29",
+    "verification_status": "verified_official",
+    "category": "consumer",
+    "source_type": "statute",
+    "topic_tags": [
+      "deficiency in service",
+      "poor service",
+      "negligence",
+      "withholding information",
+      "service quality",
+      "consumer complaint",
+      "defective service"
+    ],
+    "text": "2. (11) \"deficiency\" means any fault, imperfection, shortcoming or inadequacy in the quality, nature and manner of performance which is required to be maintained by or under any law for the time being in force or has been undertaken to be performed by a person in pursuance of a contract or otherwise in relation to any service and includes— (i) any act of negligence or omission or commission by such person which causes loss or injury to the consumer; and (ii) deliberate withholding of relevant information by such person to the consumer;",
+    "plain_summary": "The Act defines a deficiency as a fault, imperfection, shortcoming, or inadequacy in the quality, nature, or manner of performing a service that is required by law or undertaken under a contract. It includes negligence that causes loss or injury and deliberate withholding of relevant information.",
+    "applicability_note": "Whether a particular service failure is a legal deficiency depends on the facts and the applicable service terms."
+  },
+  {
+    "id": "cp-2019-s35-1-complaint",
+    "title": "Consumer Protection Act, 2019",
+    "section": "Section 35(1) - Who may file a complaint before the District Commission",
+    "jurisdiction": "India",
+    "source_url": "https://consumeraffairs.gov.in/public/upload/files/CP%20Act%202019_1732700731.pdf",
+    "collection_date": "2026-10-29",
+    "verification_status": "verified_official",
+    "category": "consumer",
+    "source_type": "statute",
+    "topic_tags": [
+      "consumer complaint",
+      "district commission",
+      "consumer court",
+      "who can complain",
+      "consumer association",
+      "multiple consumers",
+      "filing complaint"
+    ],
+    "text": "35. (1) A complaint, in relation to any goods sold or delivered or agreed to be sold or delivered or any service provided or agreed to be provided, may be filed with a District Commission by— (a) the consumer,— (i) to whom such goods are sold or delivered or agreed to be sold or delivered or such service is provided or agreed to be provided; or (ii) who alleges unfair trade practice in respect of such goods or service; (b) any recognised consumer association, whether the consumer to whom such goods are sold or delivered or agreed to be sold or delivered or such service is provided or agreed to be provided, or who alleges unfair trade practice in respect of such goods or service, is a member of such association or not; (c) one or more consumers, where there are numerous consumers having the same interest, with the permission of the District Commission, on behalf of, or for the benefit of, all consumers so interested; or (d) the Central Government, the Central Authority or the State Government, as the case may be: Provided that the complaint under this sub-section may be filed electronically in such manner as may be prescribed.",
+    "plain_summary": "The Act lists who may file a consumer complaint before the District Commission: the consumer, a recognised consumer association, one or more consumers with the Commission's permission where many consumers share the same interest, or specified government bodies. The complaint may be filed electronically in the prescribed manner.",
+    "applicability_note": "This passage describes who may file. It does not decide which Commission has jurisdiction or whether a particular claim will succeed."
+  },
+  {
+    "id": "cp-2019-s69-1-limitation",
+    "title": "Consumer Protection Act, 2019",
+    "section": "Section 69 - Limitation period",
+    "jurisdiction": "India",
+    "source_url": "https://consumeraffairs.gov.in/public/upload/files/CP%20Act%202019_1732700731.pdf",
+    "collection_date": "2026-10-29",
+    "verification_status": "verified_official",
+    "category": "consumer",
+    "source_type": "statute",
+    "topic_tags": [
+      "consumer complaint time limit",
+      "limitation period",
+      "two years",
+      "delay condonation",
+      "cause of action",
+      "consumer court deadline",
+      "filing deadline"
+    ],
+    "text": "69. (1) The District Commission, the State Commission or the National Commission shall not admit a complaint unless it is filed within two years from the date on which the cause of action has arisen. (2) Notwithstanding anything contained in sub-section (1), a complaint may be entertained after the period specified in sub-section (1), if the complainant satisfies the District Commission, the State Commission or the National Commission, as the case may be, that he had sufficient cause for not filing the complaint within such period: Provided that no such complaint shall be entertained unless the District Commission or the State Commission or the National Commission, as the case may be, records its reasons for condoning such delay.",
+    "plain_summary": "A consumer complaint must be filed within two years from the date the cause of action arose. A commission may entertain a later complaint if the complainant shows sufficient cause for the delay and the commission records its reasons for condoning it.",
+    "applicability_note": "The date the cause of action arises depends on the facts. The passage does not calculate a deadline for a particular dispute."
+  }
+]
