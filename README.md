@@ -36,12 +36,17 @@ haq/retrieve.py        TF-IDF index, category filter, abstention threshold
 haq/guide.py           Source-grounded guide result assembly
 haq/notice.py          Explicit-fact extraction only
 haq/documents.py       Local PDF, DOCX, and TXT text extraction
+haq/ai.py              Optional, opt-in AI answers grounded in retrieved passages
 law_library/           Verified source metadata and quoted passages
 law_library/sources.md Source list and verification notes
 tests/                 Pytest suite
 ```
 
 Each law-library entry records its title, section, jurisdiction, official URL, collection date, verification status, excerpt, plain-language summary, and applicability note. Only entries marked `verified_official` are indexed.
+
+### Optional local AI answers
+
+Local retrieval is the default and works with no configuration. AI answers are opt-in per question, run against a local Ollama model, and are generated only from the passages already retrieved. Set `HAQ_OLLAMA_MODEL` to the exact tag shown by `ollama list` (see `.env.example`); `.env` is git-ignored. The endpoint defaults to `http://localhost:11434` and must stay on a loopback address. The app stays in local mode until the consent checkbox is ticked, and only your question plus the retrieved passages are sent to that local model. Notices and uploaded files are never sent. Answers that cite an unretrieved source or an unknown section are discarded and the local citations are shown instead.
 
 ## Source policy
 
