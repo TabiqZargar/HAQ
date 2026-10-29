@@ -57,6 +57,18 @@ def test_generic_rights_question_abstains(retriever: Retriever) -> None:
     assert retriever.search("what are my rights") == ()
 
 
+def test_number_in_question_does_not_match_unrelated_section_number(retriever: Retriever) -> None:
+    results = retriever.search("landlord gave me 15 days notice to leave")
+    assert results
+    assert results[0].id == "tpa-1882-s106-notice"
+
+
+def test_number_in_question_does_not_trigger_abstention(retriever: Retriever) -> None:
+    results = retriever.search("I have not received my salary for 45 days")
+    assert results
+    assert results[0].id == "code-on-wages-2019-s17-payment"
+
+
 def test_scores_are_descending_and_bounded(retriever: Retriever) -> None:
     results = retriever.search("landlord refusing repairs", top_k=3)
     assert results

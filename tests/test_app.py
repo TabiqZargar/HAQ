@@ -5,9 +5,13 @@ from app import (
     FOOTER_HTML,
     SITE_HEADER_HTML,
     demo,
+    render_guide,
     render_legal_aid,
+    render_notice,
     render_privacy,
 )
+from haq.guide import build_guide
+from haq.notice import extract_notice_facts
 
 
 def _textbox_config(label: str) -> dict:
@@ -69,3 +73,22 @@ def test_privacy_and_legal_aid_information_remain_visible() -> None:
     assert "15100" in legal_aid
     assert "does not decide eligibility" in legal_aid
     assert "https://nalsa.gov.in/faqs" in legal_aid
+
+
+def test_guide_output_renders_the_verified_passage_that_ranked_first() -> None:
+    rendered = render_guide(build_guide("landlord gave me 15 days notice to leave"))
+    assert "Verified source response" in rendered
+    assert "Section 106" in rendered
+    assert "No verified match" not in rendered
+
+
+def test_notice_output_renders_explicit_deadline_language_and_amounts() -> None:
+    notice_text = (
+        "You must vacate the premises on or before 30/11/2026. "
+        "Payment of Rs. 10,000 is due within 15 days."
+    )
+    rendered = render_notice(extract_notice_facts(notice_text), notice_text)
+    assert "Explicit deadline language" in rendered
+    assert "on or before 30/11/2026" in rendered
+    assert "within 15 days" in rendered
+    assert "Rs. 10,000" in rendered

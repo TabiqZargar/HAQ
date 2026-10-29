@@ -148,7 +148,7 @@ class Retriever:
             stop_words=list(ENGLISH_STOP_WORDS | GENERIC_QUERY_WORDS),
             ngram_range=(1, 2),
             sublinear_tf=True,
-            token_pattern=r"(?u)\b[a-zA-Z0-9]+(?:'[a-zA-Z]+)?\b",
+            token_pattern=r"(?u)\b[a-zA-Z][a-zA-Z0-9']+\b",
         )
         self._matrix = self._vectorizer.fit_transform(
             self._document(entry) for entry in self.entries
