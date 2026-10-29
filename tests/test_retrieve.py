@@ -93,6 +93,36 @@ def test_scores_are_descending_and_bounded(retriever: Retriever) -> None:
     assert all(0.0 <= score <= 1.0 for score in scores)
 
 
+def test_legal_aid_eligibility_query_finds_nalsa_guidance(retriever: Retriever) -> None:
+    results = retriever.search("who is eligible for free legal aid")
+    assert results
+    assert results[0].id == "nalsa-legal-aid-eligibility"
+    assert "Section 12" in results[0].text
+
+
+def test_legal_aid_application_query_finds_nalsa_procedure(retriever: Retriever) -> None:
+    results = retriever.search("how do I apply for free legal aid")
+    assert results
+    assert results[0].id == "nalsa-legal-aid-apply"
+    assert "front office" in results[0].text
+
+
+def test_unrelated_question_does_not_return_legal_aid(retriever: Retriever) -> None:
+    assert retriever.search("how do I renew my passport") == ()
+
+
+def test_legal_aid_entries_have_valid_source_metadata(retriever: Retriever) -> None:
+    legal_aid = [entry for entry in retriever.entries if entry.category == "legal_aid"]
+    assert len(legal_aid) >= 3
+    for entry in legal_aid:
+        assert entry.verification_status == "verified_official"
+        assert entry.source_url.startswith("https://nalsa.gov.in/")
+        assert entry.collection_date == "2026-10-29"
+        assert entry.jurisdiction == "India"
+        assert entry.text.strip() and entry.plain_summary.strip()
+        assert entry.applicability_note.strip()
+
+
 def test_loaded_entries_have_official_http_urls() -> None:
     for entry in load_entries():
         assert entry.source_url.startswith("https://")

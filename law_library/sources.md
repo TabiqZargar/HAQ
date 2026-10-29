@@ -24,12 +24,12 @@ Collected and checked on **29 October 2026**. Retrieval only uses entries whose 
 
 ## Legal aid
 
-These links are shown in the interface but are not used as retrieval passages.
+Checked again on **29 October 2026**. The NALSA pages below are used for retrieval passages. `https://nalsa.gov.in/acts-rules/` returned HTTP 404 on that date, so no passage was added from it.
 
 | Source | Official URL | Status | Notes |
 | --- | --- | --- | --- |
-| NALSA FAQs | https://nalsa.gov.in/faqs | Verified | States that NALSA's toll-free helpline number is **15100** for urgent legal assistance. |
-| NALSA legal services eligibility | https://nalsa.gov.in/services/legal-aid/eligibility | Verified | Lists eligibility categories and notes that income ceilings vary by State/Union Territory. |
+| NALSA, Legal Aid | https://nalsa.gov.in/legal-aid/ | Verified against official page | Eligibility categories under s.12 of the Legal Services Authorities Act, 1987; where and how to apply; what free legal aid includes. The page also gives a State/UT income-ceiling table, so ceilings are described as State-prescribed rather than quoted as a single figure. |
+| NALSA, FAQs | https://nalsa.gov.in/faqs/ | Verified against official page | Legal services are free of cost, there is no charge for an application form, and the toll-free helpline is **15100**. |
 
 ## Source policy
 
