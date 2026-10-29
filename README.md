@@ -2,6 +2,8 @@
 
 A small, local-first legal-information app for India. It currently covers three topics:
 
+- situation guide
+- notice decoder
 - tenancy
 - consumer complaints
 - unpaid wages
