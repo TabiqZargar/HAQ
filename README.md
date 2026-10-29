@@ -57,6 +57,8 @@ Each law-library entry records its title, section, jurisdiction, official URL, c
 - It is English-only in this slice.
 - It does not provide State-specific rent-control rules, consumer fee/pecuniary-jurisdiction calculations, or minimum-wage rates.
 - Notice decoding extracts explicit text only. It does not validate whether a notice is legally effective.
+- The Notice Decoder accepts pasted text only. The interface does not include OCR, clause analysis, deadline calculation, language switching, or generated draft documents.
+- The interface uses local system fonts and inline CSS. It does not load a font CDN, analytics script, or frontend framework from an external service.
 - No Ollama or other generative model is required or included in this slice.
 - The app makes no application-level external requests at inference time and Gradio analytics is disabled. Full offline operation should still be verified in the target environment, because browser and Gradio behaviour can vary.
 

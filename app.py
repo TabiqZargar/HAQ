@@ -25,191 +25,628 @@ TOPIC_TO_CATEGORY = {
 
 CSS = """
 :root {
-  --haq-ink: #10233f;
-  --haq-ink-soft: #42536b;
-  --haq-paper: #f7f2e8;
-  --haq-card: #fffaf0;
-  --haq-line: #ddcfb7;
-  --haq-saffron: #c8781a;
-  --haq-saffron-soft: #f3dfbf;
+  --haq-surface: #fff8f3;
+  --haq-surface-low: #faf2eb;
+  --haq-surface-container: #f4ede6;
+  --haq-surface-high: #eee7e0;
+  --haq-surface-highest: #e9e1db;
+  --haq-paper: #fffdf9;
+  --haq-primary: #333b2a;
+  --haq-primary-container: #4a5240;
+  --haq-ink: #23281d;
+  --haq-tertiary: #582e0e;
+  --haq-ochre: #a6532b;
+  --haq-ochre-light: #fbece3;
+  --haq-outline: #767870;
+  --haq-line: #c6c7be;
+  --haq-line-soft: #ddd6cc;
+  --haq-on-surface: #1e1b17;
+  --haq-muted: #5d6057;
   --haq-green: #2f6b4f;
   --haq-red: #9d3d2f;
+  --haq-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --haq-sans: "Public Sans", Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
 }
 
 body, .gradio-container {
-  background:
-    radial-gradient(circle at 12% 0%, rgba(200, 120, 26, 0.09), transparent 32rem),
-    var(--haq-paper) !important;
-  color: var(--haq-ink) !important;
+  background: var(--haq-surface) !important;
+  color: var(--haq-on-surface) !important;
 }
 
 .gradio-container {
-  max-width: 1180px !important;
+  font-family: var(--haq-sans) !important;
   margin: 0 auto !important;
-  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif !important;
+  max-width: 1280px !important;
+  padding: 0 24px !important;
 }
 
-.haq-hero {
-  padding: 30px 4px 14px;
+.gradio-container .prose {
+  max-width: none !important;
 }
 
-.haq-eyebrow {
-  color: var(--haq-saffron);
-  font-size: 0.78rem;
+.gradio-container main {
+  background: transparent !important;
+}
+
+.gradio-container .main {
+  max-width: 1280px !important;
+  padding: 80px 0 0 !important;
+}
+
+#haq-site-header-html {
+  margin: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+
+#haq-site-header-html .html-container,
+#haq-site-header-html .block {
+  height: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  padding: 0 !important;
+}
+
+#haq-site-header-html .prose {
+  height: 0 !important;
+  overflow: visible !important;
+}
+
+.haq-site-header {
+  backdrop-filter: blur(14px);
+  background: rgba(255, 248, 243, 0.97);
+  border-bottom: 1px solid var(--haq-line);
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 60;
+}
+
+.haq-header-inner {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  gap: 24px;
+  height: 78px;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 0 24px;
+}
+
+.haq-brand {
+  color: inherit !important;
+  display: inline-flex;
+  flex-direction: column;
+  text-decoration: none !important;
+}
+
+.haq-brand-lockup {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  line-height: 1;
+}
+
+.haq-brand-en {
+  color: var(--haq-primary);
+  font-family: var(--haq-serif);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.haq-brand-rule {
+  color: var(--haq-line);
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+.haq-brand-script {
+  color: var(--haq-primary);
+  font-family: var(--haq-serif);
+  font-size: 1.18rem;
+  font-weight: 600;
+}
+
+.haq-brand-mark {
+  background: var(--haq-ochre-light);
+  border: 1px solid rgba(166, 83, 43, 0.24);
+  border-radius: 3px;
+  color: var(--haq-ochre);
+  font-size: 0.6rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
+  padding: 3px 6px;
   text-transform: uppercase;
 }
 
-.haq-hero h1 {
-  color: var(--haq-ink);
-  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  font-size: clamp(2rem, 4.5vw, 3.35rem);
-  line-height: 1.06;
-  margin: 10px 0 12px;
-  max-width: 970px;
-}
-
-.haq-lede {
-  color: var(--haq-ink-soft);
-  font-size: 1.04rem;
-  line-height: 1.6;
-  margin: 0;
-  max-width: 760px;
-}
-
-.haq-privacy {
-  align-items: center;
-  background: #edf3ec;
-  border: 1px solid #c9ddcb;
-  border-radius: 999px;
-  color: #28513c;
-  display: inline-flex;
-  font-size: 0.82rem;
+.haq-brand-sub {
+  color: var(--haq-muted);
+  font-size: 0.66rem;
   font-weight: 700;
-  gap: 8px;
-  margin-top: 16px;
-  padding: 7px 12px;
+  letter-spacing: 0.14em;
+  margin-top: 5px;
+  text-transform: uppercase;
 }
 
-.haq-dot {
-  background: var(--haq-green);
+.haq-top-nav {
+  align-items: stretch;
+  display: flex;
+  gap: 2px;
+  height: 78px;
+}
+
+.haq-top-nav a {
+  align-items: center;
+  border-bottom: 2px solid transparent;
+  color: var(--haq-muted) !important;
+  display: flex;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  padding: 0 10px;
+  text-decoration: none !important;
+  text-transform: uppercase;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.haq-top-nav a:first-child {
+  border-bottom-color: var(--haq-primary);
+  color: var(--haq-primary) !important;
+}
+
+.haq-top-nav a:hover {
+  border-bottom-color: var(--haq-ochre);
+  color: var(--haq-primary) !important;
+}
+
+.haq-header-help {
+  align-items: baseline;
+  background: var(--haq-ochre-light);
+  border: 1px solid rgba(166, 83, 43, 0.38);
+  border-radius: 6px;
+  color: var(--haq-ochre) !important;
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 5px;
+  padding: 7px 11px;
+  text-decoration: none !important;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.haq-header-help:hover {
+  background: var(--haq-ochre);
+  color: #ffffff !important;
+}
+
+.haq-header-help-label,
+.haq-header-help-note {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.haq-header-help strong {
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+}
+
+.haq-hero-section {
+  border-bottom: 1px solid var(--haq-line);
+  gap: 0 !important;
+  padding: 30px 0 48px !important;
+  scroll-margin-top: 96px;
+}
+
+.haq-registry {
+  align-items: center;
+  border-bottom: 1px dashed var(--haq-line);
+  color: var(--haq-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.71rem;
+  gap: 10px 18px;
+  justify-content: space-between;
+  padding-bottom: 13px;
+}
+
+.haq-registry-left,
+.haq-registry-right {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.haq-registry-left strong {
+  color: var(--haq-primary);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.haq-registry-dot {
+  background: var(--haq-primary);
   border-radius: 999px;
   display: inline-block;
   height: 8px;
   width: 8px;
 }
 
-.haq-disclaimer {
-  background: #fff8e8;
-  border: 1px solid var(--haq-saffron-soft);
-  border-left: 5px solid var(--haq-saffron);
-  border-radius: 12px;
-  color: #4a3a26;
-  font-size: 0.92rem;
-  line-height: 1.55;
-  margin: 10px 0 22px;
-  padding: 14px 18px;
+.haq-registry-sep {
+  color: var(--haq-line);
 }
 
-.haq-shell {
-  align-items: flex-start;
-  gap: 24px;
+.haq-registry-right {
+  color: var(--haq-primary);
+  font-weight: 650;
 }
 
-.haq-nav {
-  background: rgba(255, 250, 240, 0.72);
-  border: 1px solid var(--haq-line);
-  border-radius: 16px;
-  padding: 16px 12px;
-  position: sticky;
-  top: 16px;
+.haq-hero-copy {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 30px auto 24px;
+  max-width: 980px;
+  text-align: center;
 }
 
-.haq-nav-title {
-  color: var(--haq-ink-soft);
+.haq-seal {
+  align-items: center;
+  background: var(--haq-surface-high);
+  border: 1px solid var(--haq-outline);
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(35, 40, 29, 0.08);
+  color: var(--haq-primary);
+  display: inline-flex;
   font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
-  margin: 2px 8px 10px;
+  letter-spacing: 0.13em;
+  padding: 6px 12px;
   text-transform: uppercase;
 }
 
-.haq-nav a {
-  border-radius: 9px;
-  color: var(--haq-ink) !important;
+.haq-hero-copy h1 {
+  color: var(--haq-primary);
+  font-family: var(--haq-serif);
+  font-size: clamp(2.15rem, 4.8vw, 3.55rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.haq-hero-copy h1 span {
+  color: var(--haq-tertiary);
   display: block;
-  font-size: 0.92rem;
-  font-weight: 650;
-  padding: 9px 10px;
-  text-decoration: none !important;
+  font-style: italic;
+  font-weight: 400;
+  margin-top: 7px;
 }
 
-.haq-nav a:hover {
-  background: var(--haq-saffron-soft);
-  color: #6b3d08 !important;
+.haq-hero-copy > p {
+  color: var(--haq-muted);
+  font-size: 1.01rem;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 760px;
+  text-wrap: balance;
 }
 
-.haq-section-card {
-  background: var(--haq-card);
-  border: 1px solid var(--haq-line);
-  border-radius: 18px;
-  box-shadow: 0 12px 30px rgba(16, 35, 63, 0.045);
-  margin-bottom: 22px;
-  padding: 24px !important;
-  scroll-margin-top: 18px;
-}
-
-.haq-section-head {
-  border-bottom: 1px solid #eadfca;
-  margin-bottom: 16px;
-  padding-bottom: 13px;
-}
-
-.haq-kicker {
-  color: var(--haq-saffron);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.haq-section-head h2 {
-  color: var(--haq-ink);
-  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  font-size: 1.55rem;
-  margin: 4px 0 5px;
-}
-
-.haq-section-head p {
-  color: var(--haq-ink-soft);
-  font-size: 0.92rem;
+.haq-disclaimer {
+  background: var(--haq-ochre-light);
+  border: 1px solid rgba(166, 83, 43, 0.26);
+  border-left: 4px solid var(--haq-ochre);
+  border-radius: 8px;
+  color: #503727;
+  font-size: 0.82rem;
   line-height: 1.55;
+  margin-top: 6px;
+  max-width: 820px;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.haq-intake-card {
+  align-items: stretch !important;
+  background: var(--haq-paper) !important;
+  border: 2px solid var(--haq-primary) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 18px 42px rgba(35, 40, 29, 0.11);
+  flex-wrap: nowrap !important;
+  gap: 0 !important;
+  margin: 0 auto !important;
+  max-width: 980px !important;
+  padding: 10px !important;
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.haq-intake-card:focus-within {
+  border-color: var(--haq-primary) !important;
+  box-shadow: 0 0 0 4px rgba(51, 59, 42, 0.14), 0 18px 42px rgba(35, 40, 29, 0.13);
+}
+
+.haq-intake-main {
+  border: 0 !important;
+  min-width: 0 !important;
+  padding: 6px 12px 6px 10px !important;
+}
+
+.haq-intake-side {
+  border-left: 1px solid var(--haq-line-soft);
+  gap: 9px !important;
+  min-width: 230px !important;
+  padding: 8px 8px 8px 18px !important;
+}
+
+.haq-intake-card .block,
+.haq-intake-card .form {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#haq-question,
+#haq-question .block,
+#haq-question .form {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#haq-question label,
+#haq-notice-input label {
+  color: var(--haq-muted) !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+
+#haq-question textarea,
+#haq-notice-input textarea {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--haq-on-surface) !important;
+  font-family: var(--haq-sans) !important;
+  font-size: 1rem !important;
+  line-height: 1.55 !important;
+  padding: 8px 2px !important;
+}
+
+#haq-question textarea {
+  min-height: 82px;
+}
+
+#haq-question textarea:focus,
+#haq-notice-input textarea:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+#haq-question textarea::placeholder,
+#haq-notice-input textarea::placeholder {
+  color: #8c887f !important;
+}
+
+#haq-topic,
+#haq-topic .block,
+#haq-topic .form {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#haq-topic fieldset {
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#haq-topic .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#haq-topic label {
+  background: var(--haq-surface-container-low) !important;
+  border: 1px solid var(--haq-line) !important;
+  border-radius: 999px !important;
+  color: var(--haq-primary) !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  padding: 5px 9px !important;
+}
+
+#haq-topic label:has(input:checked) {
+  background: var(--haq-primary) !important;
+  border-color: var(--haq-primary) !important;
+  color: #ffffff !important;
+}
+
+#haq-topic input {
+  accent-color: var(--haq-primary);
+  margin-right: 4px;
+}
+
+#haq-ask-button,
+#haq-notice-button {
+  background: var(--haq-primary) !important;
+  border: 1px solid var(--haq-primary) !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  font-family: var(--haq-sans) !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  min-height: 43px !important;
+  text-transform: uppercase !important;
+  transition: background 160ms ease, transform 120ms ease;
+}
+
+#haq-ask-button:hover,
+#haq-notice-button:hover {
+  background: var(--haq-ink) !important;
+  border-color: var(--haq-ink) !important;
+}
+
+#haq-ask-button:active,
+#haq-notice-button:active {
+  transform: scale(0.99);
+}
+
+#haq-ask-button:focus-visible,
+#haq-notice-button:focus-visible {
+  box-shadow: 0 0 0 4px rgba(51, 59, 42, 0.2) !important;
+  outline: 2px solid var(--haq-primary) !important;
+  outline-offset: 2px !important;
+}
+
+.haq-process {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 18px auto 0;
+  max-width: 980px;
+}
+
+.haq-process-item {
+  align-items: flex-start;
+  background: rgba(250, 242, 235, 0.7);
+  border: 1px solid var(--haq-line-soft);
+  border-radius: 9px;
+  display: flex;
+  gap: 8px;
+  padding: 9px 10px;
+}
+
+.haq-process-num {
+  align-items: center;
+  background: var(--haq-surface-highest);
+  border-radius: 999px;
+  color: var(--haq-primary);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+}
+
+.haq-process-item p {
   margin: 0;
 }
 
+.haq-process-item strong {
+  color: var(--haq-primary);
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+}
+
+.haq-process-item span {
+  color: var(--haq-muted);
+  display: block;
+  font-size: 0.7rem;
+  line-height: 1.45;
+  margin-top: 2px;
+}
+
+#haq-guide-output {
+  margin: 18px auto 0;
+  max-width: 980px;
+}
+
+#haq-notice-output {
+  margin-top: 14px;
+}
+
+.haq-result-card {
+  background: var(--haq-paper);
+  border: 1px solid var(--haq-line);
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(35, 40, 29, 0.05);
+  overflow: hidden;
+}
+
+.haq-result-head {
+  align-items: center;
+  background: var(--haq-surface-container);
+  border-bottom: 1px solid var(--haq-line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  justify-content: space-between;
+  padding: 9px 13px;
+}
+
+.haq-result-head strong {
+  color: var(--haq-primary);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.haq-result-head span {
+  color: var(--haq-muted);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.66rem;
+}
+
+.haq-result-body {
+  padding: 14px;
+}
+
 .haq-output {
-  margin-top: 12px;
+  margin: 0;
 }
 
 .haq-response-note {
-  background: #f2f6f2;
-  border: 1px solid #cfe0d2;
-  border-radius: 10px;
+  background: #eef3ed;
+  border: 1px solid #c9ddcb;
+  border-radius: 8px;
   color: #315443;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin: 8px 0 14px;
-  padding: 10px 13px;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  margin: 0 0 13px;
+  padding: 10px 12px;
 }
 
 .haq-source-card {
   background: #ffffff;
-  border: 1px solid #e5dac7;
-  border-radius: 14px;
+  border: 1px solid var(--haq-line-soft);
+  border-left: 4px solid var(--haq-ochre);
+  border-radius: 9px;
   margin: 12px 0;
   overflow: hidden;
   padding: 17px 18px;
+}
+
+.haq-source-card:last-child {
+  margin-bottom: 0;
 }
 
 .haq-source-top {
@@ -217,24 +654,24 @@ body, .gradio-container {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
-  margin-bottom: 8px;
+  margin-bottom: 9px;
 }
 
 .haq-badge {
   background: #edf3ec;
   border: 1px solid #c9ddcb;
-  border-radius: 999px;
+  border-radius: 4px;
   color: #28513c;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  padding: 4px 8px;
+  font-size: 0.63rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  padding: 3px 7px;
   text-transform: uppercase;
 }
 
 .haq-badge.model {
-  background: #fff2d9;
-  border-color: #efd5a6;
+  background: var(--haq-ochre-light);
+  border-color: rgba(166, 83, 43, 0.3);
   color: #7c4b08;
 }
 
@@ -245,126 +682,137 @@ body, .gradio-container {
 }
 
 .haq-cat {
-  color: var(--haq-ink-soft);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  color: var(--haq-muted);
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .haq-source-card h3 {
-  color: var(--haq-ink);
-  font-size: 1.02rem;
+  color: var(--haq-primary);
+  font-family: var(--haq-serif);
+  font-size: 1.08rem;
   line-height: 1.35;
   margin: 0 0 3px;
 }
 
 .haq-section-name {
-  color: var(--haq-saffron);
-  font-size: 0.8rem;
-  font-weight: 700;
-  margin: 0 0 11px;
+  color: var(--haq-ochre);
+  font-size: 0.75rem;
+  font-weight: 750;
+  margin: 0 0 12px;
 }
 
 .haq-quote {
-  background: #fbf7ef;
-  border-left: 4px solid #d7b27b;
-  border-radius: 0 8px 8px 0;
+  background: var(--haq-surface-low);
+  border-left: 3px solid var(--haq-ochre);
+  border-radius: 0 6px 6px 0;
   color: #2d3c50;
-  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  font-size: 0.94rem;
+  font-family: var(--haq-serif);
+  font-size: 0.95rem;
   line-height: 1.62;
   margin: 0 0 12px;
   padding: 11px 14px;
 }
 
 .haq-plain {
-  background: #f8faf7;
-  border-radius: 9px;
-  padding: 11px 13px;
+  background: #f4f7f2;
+  border-radius: 7px;
+  padding: 11px 12px;
 }
 
 .haq-plain strong {
   color: #315443;
   display: block;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.07em;
   margin-bottom: 4px;
   text-transform: uppercase;
 }
 
 .haq-plain p {
   color: #34443a;
-  font-size: 0.89rem;
+  font-size: 0.86rem;
   line-height: 1.55;
   margin: 0;
 }
 
 .haq-note {
-  color: #5f6b7a;
-  font-size: 0.8rem;
+  color: var(--haq-muted);
+  font-size: 0.76rem;
   line-height: 1.5;
   margin: 10px 0 0;
 }
 
 .haq-source-meta {
-  border-top: 1px solid #efe6d7;
-  color: #687385;
-  font-size: 0.75rem;
-  line-height: 1.5;
+  border-top: 1px solid var(--haq-line-soft);
+  color: var(--haq-muted);
+  font-size: 0.71rem;
+  line-height: 1.55;
   margin-top: 12px;
   padding-top: 9px;
 }
 
-.haq-source-meta a, .haq-legal a, .haq-sources a {
-  color: #8a4c08 !important;
-  font-weight: 700;
+.haq-source-meta a,
+.haq-legal a,
+.haq-sources a,
+.haq-legal-links a {
+  color: var(--haq-ochre) !important;
+  font-weight: 750;
 }
 
 .haq-empty {
-  background: #fbf7ef;
-  border: 1px dashed #d8c8aa;
-  border-radius: 12px;
-  color: #5b6572;
-  line-height: 1.55;
-  padding: 16px;
+  background: var(--haq-surface-low);
+  border: 1px dashed var(--haq-line);
+  border-radius: 9px;
+  color: var(--haq-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  padding: 15px;
 }
 
 .haq-warning {
-  background: #fff1ed;
+  background: #fff0eb;
   border: 1px solid #efc9bf;
-  border-radius: 10px;
+  border-radius: 7px;
   color: #7a3024;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  margin: 8px 0 14px;
-  padding: 10px 13px;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+}
+
+.haq-warning:last-child {
+  margin-bottom: 0;
 }
 
 .haq-facts {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 }
 
 .haq-fact {
-  background: #fff;
-  border: 1px solid #e5dac7;
-  border-radius: 12px;
-  padding: 13px 14px;
+  background: #ffffff;
+  border: 1px solid var(--haq-line-soft);
+  border-radius: 8px;
+  padding: 12px 13px;
 }
 
 .haq-fact h3 {
-  color: var(--haq-ink);
-  font-size: 0.82rem;
-  letter-spacing: 0.05em;
+  color: var(--haq-primary);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
   margin: 0 0 7px;
   text-transform: uppercase;
 }
 
 .haq-fact ul {
   color: #33445a;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   line-height: 1.5;
   margin: 0;
   padding-left: 18px;
@@ -374,49 +822,466 @@ body, .gradio-container {
   margin-top: 4px;
 }
 
+.haq-band {
+  border-bottom: 1px solid var(--haq-line);
+  padding: 44px 0;
+}
+
+.haq-band-head {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.haq-band-head h2,
+.haq-section-head h2 {
+  color: var(--haq-primary);
+  font-family: var(--haq-serif);
+  font-size: clamp(1.55rem, 2.8vw, 2.1rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 3px 0 0;
+}
+
+.haq-band-head > p {
+  color: var(--haq-muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 440px;
+}
+
+.haq-eyebrow,
+.haq-kicker {
+  color: var(--haq-ochre);
+  font-size: 0.67rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.haq-tool-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.haq-tool-card {
+  background: var(--haq-paper);
+  border: 2px solid var(--haq-line);
+  border-radius: 10px;
+  color: inherit !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 230px;
+  padding: 18px;
+  text-decoration: none !important;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.haq-tool-card:hover {
+  border-color: var(--haq-primary);
+  box-shadow: 0 12px 26px rgba(35, 40, 29, 0.08);
+  transform: translateY(-2px);
+}
+
+.haq-tool-index {
+  color: var(--haq-ochre);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+}
+
+.haq-tool-card h3 {
+  color: var(--haq-primary);
+  font-family: var(--haq-serif);
+  font-size: 1.18rem;
+  line-height: 1.2;
+  margin: 10px 0 2px;
+}
+
+.haq-tool-deco {
+  color: var(--haq-tertiary);
+  font-family: var(--haq-serif);
+  font-size: 0.78rem;
+  margin: 0 0 10px;
+}
+
+.haq-tool-card > p {
+  color: var(--haq-muted);
+  font-size: 0.79rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.haq-tool-link {
+  border-top: 1px solid var(--haq-line-soft);
+  color: var(--haq-primary);
+  display: flex;
+  font-size: 0.68rem;
+  font-weight: 850;
+  justify-content: space-between;
+  letter-spacing: 0.08em;
+  margin-top: 16px;
+  padding-top: 11px;
+  text-transform: uppercase;
+}
+
+.haq-honesty {
+  background: var(--haq-surface-low);
+  border: 1px solid var(--haq-line);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.haq-honesty-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.haq-honesty-card {
+  background: var(--haq-paper);
+  border: 1px solid var(--haq-line);
+  border-radius: 9px;
+  padding: 16px;
+}
+
+.haq-honesty-card span {
+  color: var(--haq-ochre);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.haq-honesty-card h3 {
+  color: var(--haq-primary);
+  font-family: var(--haq-serif);
+  font-size: 1.02rem;
+  margin: 7px 0 6px;
+}
+
+.haq-honesty-card p {
+  color: var(--haq-muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.haq-honesty-note {
+  border-top: 1px dashed var(--haq-line);
+  color: var(--haq-muted);
+  font-size: 0.76rem;
+  line-height: 1.55;
+  margin: 18px 0 0;
+  padding-top: 13px;
+}
+
+.haq-privacy {
+  align-items: center;
+  background: var(--haq-surface-high);
+  border: 1px solid var(--haq-line);
+  border-radius: 12px;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+  margin: 44px 0;
+  padding: 24px;
+}
+
+.haq-privacy h2 {
+  color: var(--haq-primary);
+  font-family: var(--haq-serif);
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  margin: 5px 0 8px;
+}
+
+.haq-privacy p {
+  color: var(--haq-muted);
+  font-size: 0.84rem;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 680px;
+}
+
+.haq-privacy-stats {
+  display: grid;
+  gap: 8px;
+}
+
+.haq-privacy-stats div {
+  align-items: center;
+  background: var(--haq-paper);
+  border: 1px solid var(--haq-line);
+  border-radius: 7px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 9px 11px;
+}
+
+.haq-privacy-stats span {
+  color: var(--haq-muted);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.haq-privacy-stats strong {
+  color: var(--haq-primary);
+  font-size: 0.78rem;
+}
+
+.haq-section {
+  border-bottom: 1px solid var(--haq-line);
+  gap: 0 !important;
+  padding: 44px 0 !important;
+  scroll-margin-top: 96px;
+}
+
+.haq-section-head {
+  border-bottom: 1px solid var(--haq-line-soft);
+  margin-bottom: 18px;
+  padding-bottom: 13px;
+}
+
+.haq-section-head p {
+  color: var(--haq-muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  margin: 5px 0 0;
+  max-width: 760px;
+}
+
+#haq-notice-input {
+  background: var(--haq-surface-low) !important;
+  border: 1px solid var(--haq-line) !important;
+  border-radius: 9px !important;
+  padding: 10px 12px !important;
+}
+
+#haq-notice-input:focus-within {
+  border-color: var(--haq-primary) !important;
+  box-shadow: 0 0 0 3px rgba(51, 59, 42, 0.12);
+}
+
+#haq-notice-button {
+  margin-top: 10px;
+  max-width: 280px;
+}
+
+.haq-legal-section {
+  border-bottom: 1px solid var(--haq-line);
+}
+
 .haq-legal {
-  background: linear-gradient(135deg, #10233f, #18385c);
-  border-radius: 16px;
-  color: #f9f4e9;
-  padding: 22px 24px;
+  background: var(--haq-primary-container);
+  border-radius: 14px;
+  box-shadow: 0 20px 44px rgba(35, 40, 29, 0.16);
+  color: #ffffff;
+  display: grid;
+  gap: 26px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  overflow: hidden;
+  padding: 30px;
+  position: relative;
+}
+
+.haq-legal::after {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  bottom: -120px;
+  box-shadow: 0 0 0 34px rgba(255, 255, 255, 0.035), 0 0 0 68px rgba(255, 255, 255, 0.02);
+  content: "";
+  height: 280px;
+  pointer-events: none;
+  position: absolute;
+  right: -90px;
+  width: 280px;
+}
+
+.haq-legal-copy,
+.haq-legal-card {
+  position: relative;
+  z-index: 1;
+}
+
+.haq-legal-kicker {
+  color: #ffd9c0;
+  font-size: 0.67rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .haq-legal h2 {
   color: #ffffff;
-  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  font-size: 1.5rem;
-  margin: 0 0 8px;
+  font-family: var(--haq-serif);
+  font-size: clamp(1.6rem, 3vw, 2.15rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 9px 0 11px;
 }
 
-.haq-legal p, .haq-legal li {
-  color: #dfe7f1;
-  font-size: 0.91rem;
-  line-height: 1.6;
+.haq-legal p {
+  color: #e4eadf;
+  font-size: 0.84rem;
+  line-height: 1.65;
+  margin: 0 0 9px;
+  max-width: 680px;
 }
 
-.haq-legal a {
-  color: #ffd18c !important;
+.haq-legal-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 15px;
+}
+
+.haq-legal-points span {
+  color: #f5c9aa;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.haq-legal-points span::before {
+  content: "✓ ";
+}
+
+.haq-legal-card {
+  align-self: center;
+  background: var(--haq-paper);
+  border: 1px solid var(--haq-line);
+  border-radius: 10px;
+  color: var(--haq-on-surface);
+  padding: 18px;
+}
+
+.haq-legal-card-head {
+  align-items: center;
+  border-bottom: 1px solid var(--haq-line-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+}
+
+.haq-legal-card-head span:first-child {
+  color: var(--haq-tertiary);
+  font-size: 0.67rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.haq-legal-card-head span:last-child {
+  background: #e8f1e8;
+  border-radius: 3px;
+  color: var(--haq-green);
+  font-size: 0.61rem;
+  font-weight: 850;
+  padding: 3px 6px;
+  text-transform: uppercase;
 }
 
 .haq-helpline {
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 209, 140, 0.38);
-  border-radius: 12px;
+  color: var(--haq-primary) !important;
   display: inline-block;
-  font-size: 1.05rem;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 2.35rem;
+  font-weight: 850;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 2px 0 8px;
+  text-decoration: none !important;
+}
+
+.haq-helpline:hover {
+  text-decoration: underline !important;
+}
+
+.haq-legal-card p {
+  color: var(--haq-muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.haq-legal-links {
+  display: grid;
+  gap: 7px;
+}
+
+.haq-legal-links a {
+  background: var(--haq-surface-low);
+  border: 1px solid var(--haq-line);
+  border-radius: 6px;
+  color: var(--haq-primary) !important;
+  font-size: 0.73rem;
   font-weight: 800;
-  margin: 8px 0 12px;
-  padding: 10px 14px;
+  padding: 8px 10px;
+  text-align: center;
+  text-decoration: none !important;
+}
+
+.haq-legal-links a:hover {
+  background: var(--haq-ochre-light);
+  border-color: rgba(166, 83, 43, 0.34);
+  color: var(--haq-ochre) !important;
 }
 
 .haq-sources {
-  color: #4a5667;
-  font-size: 0.87rem;
-  line-height: 1.6;
+  color: var(--haq-muted);
+  font-size: 0.86rem;
+  line-height: 1.65;
+}
+
+.haq-source-summary {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 16px;
+}
+
+.haq-source-stat {
+  background: var(--haq-surface-low);
+  border: 1px solid var(--haq-line);
+  border-radius: 8px;
+  padding: 11px 13px;
+}
+
+.haq-source-stat strong {
+  color: var(--haq-primary);
+  display: block;
+  font-family: var(--haq-serif);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.haq-source-stat span {
+  color: var(--haq-muted);
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-top: 5px;
+  text-transform: uppercase;
+}
+
+.haq-sources > p {
+  margin: 0 0 10px;
 }
 
 .haq-sources ul {
-  margin: 8px 0 0;
+  margin: 10px 0 14px;
   padding-left: 20px;
 }
 
@@ -424,52 +1289,368 @@ body, .gradio-container {
   margin-bottom: 6px;
 }
 
-.haq-footer {
-  color: #687385;
+.haq-sources code {
+  background: var(--haq-surface-container);
+  border-radius: 3px;
+  color: var(--haq-primary);
+  padding: 1px 4px;
+}
+
+.haq-source-note {
+  border-top: 1px dashed var(--haq-line);
+  color: var(--haq-muted);
   font-size: 0.78rem;
-  line-height: 1.55;
-  padding: 14px 4px 32px;
-  text-align: center;
+  margin-top: 14px !important;
+  padding-top: 12px;
 }
 
-.haq-section-card .block, .haq-section-card .form {
-  border: none !important;
-  box-shadow: none !important;
+.haq-site-footer {
+  background: var(--haq-surface-low);
+  border-top: 1px solid var(--haq-line);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 30px 0 34px;
+  width: 100vw;
 }
 
-.haq-section-card input, .haq-section-card textarea {
-  background: #fffdf8 !important;
+.haq-footer-inner {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 0 24px;
 }
 
-#haq-ask-button, #haq-notice-button {
-  background: var(--haq-ink) !important;
-  border: 1px solid var(--haq-ink) !important;
-  color: #fffaf0 !important;
-  font-weight: 750 !important;
+.haq-footer-main {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--haq-line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+  justify-content: space-between;
+  padding-bottom: 18px;
 }
 
-#haq-ask-button:hover, #haq-notice-button:hover {
-  background: #1d3b63 !important;
+.haq-footer-mark {
+  color: var(--haq-primary);
+  font-family: var(--haq-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.haq-footer-main p {
+  color: var(--haq-muted);
+  font-size: 0.76rem;
+  line-height: 1.6;
+  margin: 5px 0 0;
+  max-width: 720px;
+}
+
+.haq-footer-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.haq-footer-badges span {
+  background: var(--haq-paper);
+  border: 1px solid var(--haq-line);
+  border-radius: 5px;
+  color: var(--haq-primary);
+  font-size: 0.66rem;
+  font-weight: 750;
+  padding: 6px 9px;
+}
+
+.haq-footer-bottom {
+  align-items: center;
+  color: var(--haq-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.68rem;
+  gap: 12px 24px;
+  justify-content: space-between;
+  padding-top: 16px;
+}
+
+.haq-footer-bottom nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 15px;
+}
+
+.haq-footer-bottom a {
+  color: var(--haq-muted) !important;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-decoration: none !important;
+  text-transform: uppercase;
+}
+
+.haq-footer-bottom a:hover {
+  color: var(--haq-primary) !important;
+}
+
+.haq-footer-bottom > span {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+
+@media (max-width: 1050px) {
+  .haq-top-nav {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .gradio-container .main {
+    padding-top: 72px !important;
+  }
+
+  .haq-header-inner {
+    height: 70px;
+  }
+
+  .haq-brand-sub {
+    display: none;
+  }
+
+  .haq-hero-section {
+    scroll-margin-top: 84px;
+  }
+
+  .haq-section {
+    scroll-margin-top: 84px;
+  }
+
+  .haq-tool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .haq-honesty-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
-  .haq-shell {
+  .gradio-container {
+    padding: 0 16px !important;
+  }
+
+  .haq-header-inner {
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .haq-brand-mark,
+  .haq-header-help-label,
+  .haq-header-help-note {
+    display: none;
+  }
+
+  .haq-hero-section {
+    padding-top: 22px !important;
+  }
+
+  .haq-registry {
+    align-items: flex-start;
     flex-direction: column;
   }
-  .haq-nav {
-    position: static;
-    width: 100%;
+
+  .haq-hero-copy {
+    margin-top: 24px;
   }
-  .haq-nav a {
-    display: inline-block;
+
+  .haq-hero-copy h1 {
+    font-size: clamp(1.95rem, 8vw, 2.65rem);
   }
-  .haq-hero {
-    padding-top: 20px;
+
+  .haq-hero-copy > p {
+    font-size: 0.94rem;
   }
-  .haq-section-card {
-    padding: 18px !important;
+
+  .haq-intake-card {
+    flex-direction: column !important;
+  }
+
+  .haq-intake-main {
+    padding: 6px 6px 2px !important;
+  }
+
+  .haq-intake-side {
+    border-left: 0;
+    border-top: 1px solid var(--haq-line-soft);
+    min-width: 0 !important;
+    padding: 12px 6px 6px !important;
+  }
+
+  .haq-process {
+    grid-template-columns: 1fr;
+  }
+
+  .haq-band {
+    padding: 34px 0;
+  }
+
+  .haq-band-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .haq-tool-card {
+    min-height: 210px;
+  }
+
+  .haq-honesty {
+    padding: 18px;
+  }
+
+  .haq-honesty-grid,
+  .haq-source-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .haq-privacy {
+    grid-template-columns: 1fr;
+    margin: 34px 0;
+    padding: 18px;
+  }
+
+  .haq-section {
+    padding: 34px 0 !important;
+  }
+
+  .haq-legal {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+
+  .haq-footer-inner {
+    padding: 0 16px;
   }
 }
+
+@media (max-width: 560px) {
+  .haq-brand-en {
+    font-size: 1.48rem;
+  }
+
+  .haq-brand-script {
+    font-size: 1rem;
+  }
+
+  .haq-top-nav {
+    display: none;
+  }
+
+  .haq-header-help {
+    padding: 6px 8px;
+  }
+
+  .haq-tool-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .haq-tool-card {
+    min-height: 0;
+  }
+
+  .haq-footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+"""
+
+SITE_HEADER_HTML = """
+<header class="haq-site-header">
+  <div class="haq-header-inner">
+    <a class="haq-brand" href="#ask" aria-label="Haq Guide home">
+      <span class="haq-brand-lockup">
+        <span class="haq-brand-en">Haq</span>
+        <span class="haq-brand-rule" aria-hidden="true">|</span>
+        <span class="haq-brand-script" lang="ur" dir="rtl">حق</span>
+        <span class="haq-brand-rule" aria-hidden="true">|</span>
+        <span class="haq-brand-script" lang="hi">हक़</span>
+        <span class="haq-brand-mark">सार्वजनिक</span>
+      </span>
+      <span class="haq-brand-sub">Civic legal information · Made simple</span>
+    </a>
+    <nav class="haq-top-nav" aria-label="Primary">
+      <a href="#ask">Ask</a>
+      <a href="#notice">Notice decoder</a>
+      <a href="#legal-aid">Free legal help</a>
+      <a href="#sources">Sources</a>
+    </nav>
+    <a class="haq-header-help" href="tel:15100" aria-label="Call the NALSA legal-aid helpline on 15100">
+      <span class="haq-header-help-label">NALSA</span>
+      <strong>15100</strong>
+      <span class="haq-header-help-note">free</span>
+    </a>
+  </div>
+</header>
+"""
+
+HERO_INTRO_HTML = """
+<div class="haq-registry">
+  <div class="haq-registry-left">
+    <span class="haq-registry-dot" aria-hidden="true"></span>
+    <span><strong>Haq Guide</strong></span>
+    <span class="haq-registry-sep" aria-hidden="true">·</span>
+    <span>Public-interest legal information</span>
+    <span class="haq-registry-sep" aria-hidden="true">·</span>
+    <span>No login needed</span>
+  </div>
+  <div class="haq-registry-right">Local-first · No analytics · No external AI</div>
+</div>
+<div class="haq-hero-copy">
+  <div class="haq-seal">Verified-source library · India</div>
+  <h1>
+    Tell us what happened in one sentence.
+    <span>We show you the verified law that may apply.</span>
+  </h1>
+  <p>
+    No lawyer jargon. Search a small, hand-checked library for tenancy, consumer,
+    and unpaid-wage questions. If no verified passage fits, the guide says so.
+  </p>
+  <div class="haq-disclaimer">
+    <strong>Important:</strong> Haq Guide provides general legal information, not legal advice
+    or a legal opinion. Laws, rules, and State amendments change. A quoted passage may not fit
+    your facts. For advice about your situation, contact a qualified lawyer or your District
+    Legal Services Authority.
+  </div>
+</div>
+"""
+
+FOOTER_HTML = """
+<footer class="haq-site-footer">
+  <div class="haq-footer-inner">
+    <div class="haq-footer-main">
+      <div>
+        <div class="haq-footer-mark">हक़ सबका अधिकार · Haq Guide</div>
+        <p>
+          General legal information, not legal advice or a legal opinion. Sourced from the
+          verified law-library passages listed on this page. The app does not calculate
+          deadlines, infer missing dates, or decide legal-aid eligibility.
+        </p>
+      </div>
+      <div class="haq-footer-badges" aria-label="Application qualities">
+        <span>Verified library</span>
+        <span>Local-first</span>
+        <span>No external AI</span>
+      </div>
+    </div>
+    <div class="haq-footer-bottom">
+      <nav aria-label="Footer">
+        <a href="#ask">Ask</a>
+        <a href="#notice">Notice decoder</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#legal-aid">Free legal help</a>
+        <a href="#sources">Sources</a>
+      </nav>
+      <span>Hackathon prototype · English starter library</span>
+    </div>
+  </div>
+</footer>
 """
 
 
@@ -485,6 +1666,21 @@ def _section_head(kicker: str, title: str, description: str) -> str:
         f"<p>{_escape(description)}</p>"
         "</div>"
     )
+
+
+def _result_shell(title: str, meta: str, body: str, *, empty: bool = False) -> str:
+    empty_class = " haq-result-empty" if empty else ""
+    return f"""
+    <div class="haq-output">
+      <div class="haq-result-card{empty_class}">
+        <div class="haq-result-head">
+          <strong>{_escape(title)}</strong>
+          <span>{_escape(meta)}</span>
+        </div>
+        <div class="haq-result-body">{body}</div>
+      </div>
+    </div>
+    """
 
 
 def _badge_for(passage) -> str:
@@ -522,40 +1718,41 @@ def _render_source_card(passage) -> str:
 
 def render_guide(result: GuideResult) -> str:
     if result.abstained:
-        return f"""
-        <div class="haq-output">
+        body = f"""
           <div class="haq-warning">{_escape(result.message)}</div>
           <div class="haq-empty">
             The guide only answers when it can quote a passage from its small verified library.
             It does not use an external AI model, invent a section, or calculate a deadline.
           </div>
-        </div>
         """
+        return _result_shell("No verified match", "Local search · no guess", body)
 
     cards = "".join(_render_source_card(passage) for passage in result.passages)
-    return f"""
-    <div class="haq-output">
+    count_label = "source passage" if len(result.passages) == 1 else "source passages"
+    body = f"""
       <div class="haq-response-note">{_escape(result.message)}</div>
       {cards}
-    </div>
     """
+    return _result_shell("Verified source response", f"{len(result.passages)} {count_label} · local search", body)
 
 
 def render_notice(facts: NoticeFacts, original: str) -> str:
     if not (original or "").strip():
-        return (
+        body = (
             '<div class="haq-empty">Paste the notice text above. '
             "The decoder will show only explicit dates, amounts, parties, reference numbers, "
             "and deadline language it can see in the text.</div>"
         )
+        return _result_shell("Explicit facts only", "No dates inferred", body, empty=True)
 
     if not facts.has_facts:
-        return """
+        body = """
         <div class="haq-warning">
           No explicit dates, amounts, labelled parties, reference numbers, or deadline phrases
           were found. This tool does not infer a date or deadline.
         </div>
         """
+        return _result_shell("No explicit facts found", "Nothing inferred", body)
 
     def fact_block(title: str, values: tuple[str, ...]) -> str:
         if not values:
@@ -572,41 +1769,188 @@ def render_notice(facts: NoticeFacts, original: str) -> str:
             fact_block("Explicit deadline language", facts.deadline_language),
         )
     )
-    return f"""
+    body = f"""
     <div class="haq-warning">
       These are exact text matches only. No deadline has been calculated, converted, or inferred.
       Check the original notice and confirm any date with a qualified person.
     </div>
     <div class="haq-facts">{blocks}</div>
     """
+    return _result_shell("Explicit text matches", "No legal conclusion", body)
 
 
 def render_empty_guide() -> str:
-    return """
+    body = """
     <div class="haq-empty">
       Try a specific question, such as: “My landlord has not returned my security deposit.”
       Choose a topic to narrow the search, or leave it on “All topics”.
     </div>
+    """
+    return _result_shell("Ready when you are", "No external AI", body, empty=True)
+
+
+def render_how_it_works() -> str:
+    count = len(get_retriever().entries)
+    return f"""
+    <div class="haq-process" aria-label="How the guide works">
+      <div class="haq-process-item">
+        <span class="haq-process-num">1</span>
+        <p><strong>Describe the problem</strong><span>Tenancy, consumer, or unpaid-wage question in English.</span></p>
+      </div>
+      <div class="haq-process-item">
+        <span class="haq-process-num">2</span>
+        <p><strong>Local search</strong><span>The TF-IDF retriever checks {count} verified passages.</span></p>
+      </div>
+      <div class="haq-process-item">
+        <span class="haq-process-num">3</span>
+        <p><strong>Sources or abstention</strong><span>Quoted passages and summaries, or an explicit no-match response.</span></p>
+      </div>
+    </div>
+    """
+
+
+def render_tools() -> str:
+    retriever = get_retriever()
+    unique_sources = {(entry.title, entry.source_url) for entry in retriever.entries}
+    return f"""
+    <section class="haq-band" aria-labelledby="tools-title">
+      <div class="haq-band-head">
+        <div>
+          <div class="haq-eyebrow">In this MVP</div>
+          <h2 id="tools-title">Four real routes through the guide</h2>
+        </div>
+        <p>Each card opens a working section of this local app. No placeholder pages or simulated results.</p>
+      </div>
+      <div class="haq-tool-grid">
+        <a class="haq-tool-card" href="#ask">
+          <div>
+            <span class="haq-tool-index">01 · Ask</span>
+            <h3>Situation guide</h3>
+            <p class="haq-tool-deco">मामला गाइड</p>
+            <p>Describe a tenancy, consumer, or unpaid-wage problem. The local search returns quoted passages or an explicit abstention.</p>
+          </div>
+          <span class="haq-tool-link">Go to the question box <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="haq-tool-card" href="#notice">
+          <div>
+            <span class="haq-tool-index">02 · Notice</span>
+            <h3>Notice decoder</h3>
+            <p class="haq-tool-deco">नोटिस अनुवादक</p>
+            <p>Paste notice text. The decoder extracts only explicit dates, amounts, parties, reference numbers, and deadline language.</p>
+          </div>
+          <span class="haq-tool-link">Open notice decoder <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="haq-tool-card" href="#sources">
+          <div>
+            <span class="haq-tool-index">03 · Sources</span>
+            <h3>Verified library</h3>
+            <p class="haq-tool-deco">सत्यापित स्रोत</p>
+            <p>{len(retriever.entries)} checked passages from {len(unique_sources)} official documents. Every indexed entry is marked verified_official.</p>
+          </div>
+          <span class="haq-tool-link">See the sources <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="haq-tool-card" href="#legal-aid">
+          <div>
+            <span class="haq-tool-index">04 · Legal aid</span>
+            <h3>Free legal help</h3>
+            <p class="haq-tool-deco">मुफ़्त कानूनी सहायता</p>
+            <p>NALSA helpline 15100, the official FAQ, and legal-aid eligibility information. This app does not decide eligibility.</p>
+          </div>
+          <span class="haq-tool-link">Go to legal aid <span aria-hidden="true">→</span></span>
+        </a>
+      </div>
+    </section>
+    """
+
+
+def render_honesty() -> str:
+    return """
+    <section class="haq-band haq-honesty" aria-labelledby="honesty-title">
+      <div class="haq-band-head">
+        <div>
+          <div class="haq-eyebrow">Source policy</div>
+          <h2 id="honesty-title">How the guide stays honest</h2>
+        </div>
+        <p>The visual language is new. The behavior is the same verified-source pipeline underneath.</p>
+      </div>
+      <div class="haq-honesty-grid">
+        <article class="haq-honesty-card">
+          <span>01</span>
+          <h3>Quoted, not invented</h3>
+          <p>Every answer comes from the verified law library. The app does not generate a legal rule from a model.</p>
+        </article>
+        <article class="haq-honesty-card">
+          <span>02</span>
+          <h3>Abstains when unsure</h3>
+          <p>If no indexed passage clears the relevance threshold, the guide says it could not find a verified match.</p>
+        </article>
+        <article class="haq-honesty-card">
+          <span>03</span>
+          <h3>No hidden calculations</h3>
+          <p>The notice decoder extracts explicit text only. It does not calculate, convert, or infer a deadline.</p>
+        </article>
+      </div>
+      <p class="haq-honesty-note">
+        The Model Tenancy Act, 2021 is a model law and is not automatically applicable in every
+        State or Union Territory. The Code on Wages, 2019 has been in force since 21 November 2025.
+      </p>
+    </section>
+    """
+
+
+def render_privacy() -> str:
+    return """
+    <section class="haq-privacy" id="privacy" aria-labelledby="privacy-title">
+      <div>
+        <div class="haq-eyebrow">Privacy, in plain words</div>
+        <h2 id="privacy-title">Your privacy is part of the architecture.</h2>
+        <p>
+          Haq Guide runs as a local Gradio app. It does not use analytics, an external AI API,
+          or an account system. Source links open only when you click them. The app makes no
+          application-level external requests during retrieval or notice decoding.
+        </p>
+      </div>
+      <div class="haq-privacy-stats" aria-label="Privacy facts">
+        <div><span>Analytics</span><strong>None</strong></div>
+        <div><span>External AI</span><strong>None</strong></div>
+        <div><span>Account</span><strong>Not needed</strong></div>
+      </div>
+    </section>
     """
 
 
 def render_legal_aid() -> str:
     return """
     <div class="haq-legal">
-      <div class="haq-kicker">Free legal help</div>
-      <h2>If the problem is urgent or you cannot afford a lawyer</h2>
-      <p>NALSA's official FAQ states that people can contact its toll-free helpline for urgent legal assistance.</p>
-      <div class="haq-helpline">NALSA helpline: 15100</div>
-      <p>
-        <a href="https://nalsa.gov.in/faqs" target="_blank" rel="noopener noreferrer">Read the NALSA FAQ</a>
-        ·
-        <a href="https://nalsa.gov.in/services/legal-aid/eligibility" target="_blank" rel="noopener noreferrer">Check legal-aid eligibility</a>
-      </p>
-      <p>
-        Eligibility can depend on the category of applicant and, for income-based eligibility,
-        on the limits prescribed for the relevant State or Union Territory. This app does not
-        decide eligibility.
-      </p>
+      <div class="haq-legal-copy">
+        <div class="haq-legal-kicker">Free legal help · NALSA</div>
+        <h2>If the problem is urgent or you cannot afford a lawyer</h2>
+        <p>
+          NALSA's official FAQ states that people can contact its toll-free helpline for urgent
+          legal assistance.
+        </p>
+        <p>
+          Eligibility can depend on the category of applicant and, for income-based eligibility,
+          on the limits prescribed for the relevant State or Union Territory. This app does not
+          decide eligibility.
+        </p>
+        <div class="haq-legal-points">
+          <span>Official NALSA links</span>
+          <span>No eligibility decision in this app</span>
+        </div>
+      </div>
+      <div class="haq-legal-card">
+        <div class="haq-legal-card-head">
+          <span>National Legal Aid Helpline</span>
+          <span>Toll-free</span>
+        </div>
+        <a class="haq-helpline" href="tel:15100">15100</a>
+        <p>The app itself does not place the call. Use the official links below to confirm current information.</p>
+        <div class="haq-legal-links">
+          <a href="https://nalsa.gov.in/faqs" target="_blank" rel="noopener noreferrer">Read the NALSA FAQ</a>
+          <a href="https://nalsa.gov.in/services/legal-aid/eligibility" target="_blank" rel="noopener noreferrer">Check legal-aid eligibility</a>
+        </div>
+      </div>
     </div>
     """
 
@@ -625,13 +1969,18 @@ def render_sources() -> str:
         )
     return f"""
     <div class="haq-sources">
+      <div class="haq-source-summary">
+        <div class="haq-source-stat"><strong>{len(retriever.entries)}</strong><span>checked passages</span></div>
+        <div class="haq-source-stat"><strong>{len(unique)}</strong><span>official documents</span></div>
+        <div class="haq-source-stat"><strong>100%</strong><span>verified_official only</span></div>
+      </div>
       <p>
         The starter library contains <strong>{len(retriever.entries)}</strong> checked passages
         from <strong>{len(unique)}</strong> official documents. Only passages marked
         <code>verified_official</code> are searchable.
       </p>
       <ul>{''.join(items)}</ul>
-      <p>
+      <p class="haq-source-note">
         The Model Tenancy Act, 2021 is a model law; it is not automatically applicable in every
         State or Union Territory. The Code on Wages, 2019 has been in force since 21 November 2025.
       </p>
@@ -648,116 +1997,82 @@ def _handle_notice(text: str) -> str:
     return render_notice(extract_notice_facts(text), text)
 
 
-HEADER_HTML = """
-<div class="haq-hero">
-  <div class="haq-eyebrow">Local-first legal information · India</div>
-  <h1>Haq Guide — Know your rights. Understand your options.</h1>
-  <p class="haq-lede">
-    A small, source-backed guide for tenancy, consumer, and unpaid-wage questions.
-    It quotes verified law-library passages and says when it cannot find an answer.
-  </p>
-  <div class="haq-privacy"><span class="haq-dot"></span>Runs on this device · No analytics · No external AI</div>
-</div>
-<div class="haq-disclaimer">
-  <strong>Important:</strong> Haq Guide provides general legal information, not legal advice or a
-  legal opinion. Laws, rules, and State amendments change. A quoted passage may not fit your facts.
-  For advice about your situation, contact a qualified lawyer or your District Legal Services Authority.
-</div>
-"""
-
-NAV_HTML = """
-<nav class="haq-nav" aria-label="Sections">
-  <div class="haq-nav-title">On this page</div>
-  <a href="#ask">Ask a question</a>
-  <a href="#notice">Decode a notice</a>
-  <a href="#legal-aid">Free legal help</a>
-  <a href="#sources">Sources</a>
-</nav>
-"""
-
-FOOTER_HTML = """
-<div class="haq-footer">
-  Haq Guide is a hackathon prototype. It does not call an external AI API, use analytics, or
-  send your text to an external server. Source links open only when you click them.
-</div>
-"""
-
-
 def build_app() -> gr.Blocks:
     with gr.Blocks(
         title=APP_TITLE,
         analytics_enabled=False,
     ) as demo:
-        gr.HTML(HEADER_HTML)
+        gr.HTML(SITE_HEADER_HTML, elem_id="haq-site-header-html")
 
-        with gr.Row(elem_classes=["haq-shell"], elem_id="haq-shell"):
-            with gr.Column(scale=1, min_width=170, elem_id="haq-nav-col"):
-                gr.HTML(NAV_HTML)
-
-            with gr.Column(scale=5, elem_id="haq-content"):
-                with gr.Column(elem_id="ask", elem_classes=["haq-section-card"]):
-                    gr.HTML(
-                        _section_head(
-                            "01 · Ask",
-                            "Start with the problem",
-                            "Describe what happened. The guide searches only the verified starter library.",
-                        )
-                    )
+        with gr.Column(elem_id="ask", elem_classes=["haq-hero-section"]):
+            gr.HTML(HERO_INTRO_HTML)
+            with gr.Row(elem_classes=["haq-intake-card"]):
+                with gr.Column(scale=4, elem_classes=["haq-intake-main"]):
                     query = gr.Textbox(
                         label="Your question",
-                        placeholder="Example: My landlord is keeping my security deposit without giving a reason.",
+                        placeholder="e.g. My landlord is keeping my security deposit without giving a reason.",
                         lines=3,
                         interactive=True,
+                        elem_id="haq-question",
                     )
+                with gr.Column(scale=2, min_width=230, elem_classes=["haq-intake-side"]):
                     topic = gr.Radio(
                         choices=list(TOPIC_LABELS),
                         value="All topics",
                         label="Topic",
                         info="Choose one topic, or search all three.",
+                        elem_id="haq-topic",
                     )
                     ask_button = gr.Button(
                         "Find verified guidance",
                         variant="primary",
                         elem_id="haq-ask-button",
                     )
-                    guide_output = gr.HTML(value=render_empty_guide(), elem_id="haq-guide-output")
+            gr.HTML(render_how_it_works())
+            guide_output = gr.HTML(value=render_empty_guide(), elem_id="haq-guide-output")
 
-                with gr.Column(elem_id="notice", elem_classes=["haq-section-card"]):
-                    gr.HTML(
-                        _section_head(
-                            "02 · Notice",
-                            "Decode a notice",
-                            "Paste a notice to pull out only what it explicitly says. No dates are calculated.",
-                        )
-                    )
-                    notice_input = gr.Textbox(
-                        label="Notice text",
-                        placeholder="Paste the full notice here, including dates, amounts, and reference numbers.",
-                        lines=8,
-                        interactive=True,
-                    )
-                    notice_button = gr.Button(
-                        "Extract explicit facts",
-                        variant="primary",
-                        elem_id="haq-notice-button",
-                    )
-                    notice_output = gr.HTML(
-                        value="<div class='haq-empty'>Paste a notice above to see explicit facts.</div>",
-                        elem_id="haq-notice-output",
-                    )
+        gr.HTML(render_tools())
 
-                with gr.Column(elem_id="legal-aid", elem_classes=["haq-section-card"]):
-                    gr.HTML(render_legal_aid())
+        with gr.Column(elem_id="notice", elem_classes=["haq-section"]):
+            gr.HTML(
+                _section_head(
+                    "02 · Notice",
+                    "Decode a notice",
+                    "Paste a notice to pull out only what it explicitly says. No dates are calculated.",
+                )
+            )
+            notice_input = gr.Textbox(
+                label="Notice text",
+                placeholder="Paste the full notice here, including dates, amounts, and reference numbers.",
+                lines=8,
+                interactive=True,
+                elem_id="haq-notice-input",
+            )
+            notice_button = gr.Button(
+                "Extract explicit facts",
+                variant="primary",
+                elem_id="haq-notice-button",
+            )
+            notice_output = gr.HTML(
+                value=render_notice(NoticeFacts((), (), (), (), ()), ""),
+                elem_id="haq-notice-output",
+            )
 
-                with gr.Column(elem_id="sources", elem_classes=["haq-section-card"]):
-                    gr.HTML(
-                        _section_head(
-                            "03 · Sources",
-                            "What this guide can quote",
-                            "A deliberately small library. If a question falls outside it, the guide abstains.",
-                        )
-                    )
-                    gr.HTML(render_sources())
+        gr.HTML(render_honesty())
+        gr.HTML(render_privacy())
+
+        with gr.Column(elem_id="legal-aid", elem_classes=["haq-section", "haq-legal-section"]):
+            gr.HTML(render_legal_aid())
+
+        with gr.Column(elem_id="sources", elem_classes=["haq-section"]):
+            gr.HTML(
+                _section_head(
+                    "03 · Sources",
+                    "What this guide can quote",
+                    "A deliberately small library. If a question falls outside it, the guide abstains.",
+                )
+            )
+            gr.HTML(render_sources())
 
         gr.HTML(FOOTER_HTML)
 
