@@ -57,12 +57,70 @@ def test_generic_rights_question_abstains(retriever: Retriever) -> None:
     assert retriever.search("what are my rights") == ()
 
 
+def test_single_shared_word_does_not_answer_an_unrelated_question(retriever: Retriever) -> None:
+    assert retriever.search("how do I register a company") == ()
+
+
+def test_one_word_query_still_finds_a_matching_passage(retriever: Retriever) -> None:
+    results = retriever.search("eviction")
+    assert results
+    assert results[0].id == "mta-2021-s21-eviction"
+
+
+def test_two_word_query_with_a_phrase_match_is_still_answered(retriever: Retriever) -> None:
+    results = retriever.search("deposit refund")
+    assert results
+    assert results[0].id == "mta-2021-s11-security-deposit"
+
+
+def test_number_in_question_does_not_match_unrelated_section_number(retriever: Retriever) -> None:
+    results = retriever.search("landlord gave me 15 days notice to leave")
+    assert results
+    assert results[0].id == "tpa-1882-s106-notice"
+
+
+def test_number_in_question_does_not_trigger_abstention(retriever: Retriever) -> None:
+    results = retriever.search("I have not received my salary for 45 days")
+    assert results
+    assert results[0].id == "code-on-wages-2019-s17-payment"
+
+
 def test_scores_are_descending_and_bounded(retriever: Retriever) -> None:
     results = retriever.search("landlord refusing repairs", top_k=3)
     assert results
     scores = [result.score for result in results]
     assert scores == sorted(scores, reverse=True)
     assert all(0.0 <= score <= 1.0 for score in scores)
+
+
+def test_legal_aid_eligibility_query_finds_nalsa_guidance(retriever: Retriever) -> None:
+    results = retriever.search("who is eligible for free legal aid")
+    assert results
+    assert results[0].id == "nalsa-legal-aid-eligibility"
+    assert "Section 12" in results[0].text
+
+
+def test_legal_aid_application_query_finds_nalsa_procedure(retriever: Retriever) -> None:
+    results = retriever.search("how do I apply for free legal aid")
+    assert results
+    assert results[0].id == "nalsa-legal-aid-apply"
+    assert "front office" in results[0].text
+
+
+def test_unrelated_question_does_not_return_legal_aid(retriever: Retriever) -> None:
+    assert retriever.search("how do I renew my passport") == ()
+
+
+def test_legal_aid_entries_have_valid_source_metadata(retriever: Retriever) -> None:
+    legal_aid = [entry for entry in retriever.entries if entry.category == "legal_aid"]
+    assert len(legal_aid) >= 3
+    for entry in legal_aid:
+        assert entry.verification_status == "verified_official"
+        assert entry.source_url.startswith("https://nalsa.gov.in/")
+        assert entry.collection_date == "2026-10-29"
+        assert entry.jurisdiction == "India"
+        assert entry.text.strip() and entry.plain_summary.strip()
+        assert entry.applicability_note.strip()
 
 
 def test_loaded_entries_have_official_http_urls() -> None:

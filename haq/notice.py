@@ -10,6 +10,11 @@ _MONTHS = (
     r"October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec"
 )
 
+_NUMBER_WORD = (
+    r"\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|"
+    r"eleven|twelve|fifteen|twenty|thirty|forty|sixty|ninety"
+)
+
 _DATE_PATTERNS = (
     re.compile(r"\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b"),
     re.compile(r"\b\d{4}-\d{1,2}-\d{1,2}\b"),
@@ -39,12 +44,11 @@ _PARTY_PATTERN = re.compile(
 
 _DEADLINE_PATTERNS = (
     re.compile(
-        r"\b(?:within|before|by|on\s+or\s+before|no\s+later\s+than|"
-        r"not\s+later\s+than|latest\s+by)\s+(?:the\s+)?"
-        r"(?:\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|"
-        r"eleven|twelve|fifteen|twenty|thirty|forty|sixty|ninety)\s+"
-        r"(?:\s*\(\d{1,3}\))?\s+"
-        r"(?:working\s+)?(?:days?|weeks?|months?|years?)"
+        rf"\b(?:within|before|by|on\s+or\s+before|no\s+later\s+than|"
+        rf"not\s+later\s+than|latest\s+by)\s+(?:the\s+)?"
+        rf"(?:{_NUMBER_WORD})"
+        rf"(?:\s*\(\s*(?:{_NUMBER_WORD})\s*\))?"
+        r"\s+(?:working\s+)?(?:days?|weeks?|months?|years?)"
         r"(?:\s+(?:of|from|after)\s+[^.;\n]{1,100})?",
         re.I,
     ),

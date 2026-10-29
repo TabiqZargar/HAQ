@@ -35,12 +35,18 @@ app.py                 Gradio interface and result rendering
 haq/retrieve.py        TF-IDF index, category filter, abstention threshold
 haq/guide.py           Source-grounded guide result assembly
 haq/notice.py          Explicit-fact extraction only
+haq/documents.py       Local PDF, DOCX, and TXT text extraction
+haq/ai.py              Optional, opt-in AI answers grounded in retrieved passages
 law_library/           Verified source metadata and quoted passages
 law_library/sources.md Source list and verification notes
 tests/                 Pytest suite
 ```
 
 Each law-library entry records its title, section, jurisdiction, official URL, collection date, verification status, excerpt, plain-language summary, and applicability note. Only entries marked `verified_official` are indexed.
+
+### Optional local AI answers
+
+Local retrieval is the default and works with no configuration. AI answers are opt-in per question, run against a local Ollama model, and are generated only from the passages already retrieved. Set `HAQ_OLLAMA_MODEL` to the exact tag shown by `ollama list` (see `.env.example`); `.env` is git-ignored. The endpoint defaults to `http://localhost:11434` and must stay on a loopback address. The app stays in local mode until the consent checkbox is ticked, and only your question plus the retrieved passages are sent to that local model. Notices and uploaded files are never sent. Answers that cite an unretrieved source or an unknown section are discarded and the local citations are shown instead.
 
 ## Source policy
 
@@ -57,7 +63,7 @@ Each law-library entry records its title, section, jurisdiction, official URL, c
 - It is English-only in this slice.
 - It does not provide State-specific rent-control rules, consumer fee/pecuniary-jurisdiction calculations, or minimum-wage rates.
 - Notice decoding extracts explicit text only. It does not validate whether a notice is legally effective.
-- The Notice Decoder accepts pasted text only. The interface does not include OCR, clause analysis, deadline calculation, language switching, or generated draft documents.
+- The Notice Decoder accepts pasted text plus PDF, DOCX, and TXT uploads. PDFs and DOCX files are read locally with `pypdf` and `python-docx`; text files must be UTF-8 or UTF-16. There is no OCR, so scanned PDFs report that no text could be extracted. The interface does not include clause analysis, deadline calculation, language switching, or generated draft documents.
 - The interface uses local system fonts and inline CSS. It does not load a font CDN, analytics script, or frontend framework from an external service.
 - No Ollama or other generative model is required or included in this slice.
 - The app makes no application-level external requests at inference time and Gradio analytics is disabled. Full offline operation should still be verified in the target environment, because browser and Gradio behaviour can vary.
