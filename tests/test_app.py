@@ -4,6 +4,7 @@ from app import (
     CSS,
     FOOTER_HTML,
     SITE_HEADER_HTML,
+    _handle_notice_upload,
     demo,
     render_guide,
     render_legal_aid,
@@ -22,6 +23,14 @@ def _textbox_config(label: str) -> dict:
     raise AssertionError(f"Textbox with label {label!r} not found")
 
 
+def _file_config(label: str) -> dict:
+    for component in demo.config["components"]:
+        props = component["props"]
+        if component["type"] == "file" and props.get("label") == label:
+            return props
+    raise AssertionError(f"File component with label {label!r} not found")
+
+
 def _rendered_html() -> str:
     return "\n".join(
         str(component["props"].get("value", ""))
@@ -33,6 +42,41 @@ def _rendered_html() -> str:
 def test_question_and_notice_textboxes_are_explicitly_interactive() -> None:
     assert _textbox_config("Your question")["interactive"] is True
     assert _textbox_config("Notice text")["interactive"] is True
+
+
+def test_notice_file_upload_accepts_supported_local_formats() -> None:
+    props = _file_config("Or upload a notice (.pdf, .docx, or .txt)")
+    assert props["file_types"] == [".pdf", ".docx", ".txt"]
+    assert props["file_count"] == "single"
+    assert props["interactive"] is True
+    assert any(
+        dependency.get("api_name") == "_handle_notice_upload"
+        for dependency in demo.config["dependencies"]
+    )
+
+
+def test_notice_upload_handler_previews_text_and_mentions_local_reading(tmp_path) -> None:
+    path = tmp_path / "notice.txt"
+    path.write_text(
+        "You must vacate on or before 30/11/2026. Payment of Rs. 10,000 is due within 15 days.",
+        encoding="utf-8",
+    )
+
+    preview, status = _handle_notice_upload(str(path))
+
+    assert "30/11/2026" in preview
+    assert "Loaded plain text" in status
+    assert "external service" in status
+
+
+def test_notice_upload_handler_reports_unsupported_files_gracefully(tmp_path) -> None:
+    path = tmp_path / "notice.rtf"
+    path.write_text("{\\rtf1 notice}", encoding="utf-8")
+
+    _, status = _handle_notice_upload(str(path))
+
+    assert "Unsupported file type" in status
+    assert "haq-warning" in status
 
 
 def test_navigation_targets_real_sections() -> None:

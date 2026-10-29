@@ -1,3 +1,5 @@
 gradio==6.31.0
 scikit-learn==1.9.1
+pypdf==6.21.4
+python-docx==1.2.0
 pytest==9.2.0

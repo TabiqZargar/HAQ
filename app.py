@@ -11,6 +11,7 @@ os.environ.setdefault("GRADIO_SERVER_NAME", "127.0.0.1")
 
 import gradio as gr
 
+from haq.documents import DocumentError, SUPPORTED_EXTENSIONS, read_notice_document
 from haq.guide import CATEGORY_LABELS, GuideResult, build_guide, get_retriever
 from haq.notice import NoticeFacts, extract_notice_facts
 
@@ -22,6 +23,12 @@ TOPIC_TO_CATEGORY = {
     "Consumer": "consumer",
     "Unpaid wages": "labour",
 }
+
+NOTICE_UPLOAD_HELP = (
+    "Upload a PDF, DOCX, or TXT file to load its text into the box below. "
+    "Files are read on this computer and are not sent to an external service. "
+    "Scanned PDFs are not OCR'd; if no text can be extracted, paste the text instead."
+)
 
 CSS = """
 :root {
@@ -1779,6 +1786,11 @@ def render_notice(facts: NoticeFacts, original: str) -> str:
     return _result_shell("Explicit text matches", "No legal conclusion", body)
 
 
+def render_notice_file_status(message: str, *, warning: bool = False) -> str:
+    css_class = "haq-warning" if warning else "haq-empty"
+    return f'<div class="{css_class}">{_escape(message)}</div>'
+
+
 def render_empty_guide() -> str:
     body = """
     <div class="haq-empty">
@@ -1836,7 +1848,7 @@ def render_tools() -> str:
             <span class="haq-tool-index">02 · Notice</span>
             <h3>Notice decoder</h3>
             <p class="haq-tool-deco">नोटिस अनुवादक</p>
-            <p>Paste notice text. The decoder extracts only explicit dates, amounts, parties, reference numbers, and deadline language.</p>
+            <p>Paste notice text or upload a PDF, DOCX, or TXT file. The decoder extracts only explicit dates, amounts, parties, reference numbers, and deadline language.</p>
           </div>
           <span class="haq-tool-link">Open notice decoder <span aria-hidden="true">→</span></span>
         </a>
@@ -1887,7 +1899,7 @@ def render_honesty() -> str:
         <article class="haq-honesty-card">
           <span>03</span>
           <h3>No hidden calculations</h3>
-          <p>The notice decoder extracts explicit text only. It does not calculate, convert, or infer a deadline.</p>
+          <p>The notice decoder extracts explicit text only from pasted or uploaded text. It does not OCR scanned pages, calculate, convert, or infer a deadline.</p>
         </article>
       </div>
       <p class="haq-honesty-note">
@@ -1906,8 +1918,9 @@ def render_privacy() -> str:
         <h2 id="privacy-title">Your privacy is part of the architecture.</h2>
         <p>
           Haq Guide runs as a local Gradio app. It does not use analytics, an external AI API,
-          or an account system. Source links open only when you click them. The app makes no
-          application-level external requests during retrieval or notice decoding.
+          or an account system. Source links open only when you click them. Uploaded notice
+          files are read on this computer and are not sent to an external service. The app makes
+          no application-level external requests during retrieval or notice decoding.
         </p>
       </div>
       <div class="haq-privacy-stats" aria-label="Privacy facts">
@@ -1997,6 +2010,33 @@ def _handle_notice(text: str) -> str:
     return render_notice(extract_notice_facts(text), text)
 
 
+def _handle_notice_upload(file_value):
+    if file_value in (None, "", []):
+        return gr.skip(), render_notice_file_status(NOTICE_UPLOAD_HELP)
+    try:
+        document = read_notice_document(file_value)
+    except DocumentError as exc:
+        return gr.skip(), render_notice_file_status(str(exc), warning=True)
+    except Exception:
+        return gr.skip(), render_notice_file_status(
+            "This file could not be read. Upload a different PDF, DOCX, or TXT file.",
+            warning=True,
+        )
+
+    details = [f"Loaded {document.kind}"]
+    if document.pages is not None:
+        details.append(f"{document.pages} page(s)")
+    details.append(f"{len(document.text):,} characters")
+    message = (
+        " · ".join(details)
+        + ". Review the text above, then extract explicit facts. "
+        "Nothing was sent to an external service."
+    )
+    if document.warnings:
+        message = message + " " + " ".join(document.warnings)
+    return document.text, render_notice_file_status(message, warning=bool(document.warnings))
+
+
 def build_app() -> gr.Blocks:
     with gr.Blocks(
         title=APP_TITLE,
@@ -2038,8 +2078,21 @@ def build_app() -> gr.Blocks:
                 _section_head(
                     "02 · Notice",
                     "Decode a notice",
-                    "Paste a notice to pull out only what it explicitly says. No dates are calculated.",
+                    "Paste a notice or upload a PDF, DOCX, or TXT file. Only what the text "
+                    "explicitly says is shown. No dates are calculated, and scanned PDFs are not OCR'd.",
                 )
+            )
+            notice_file = gr.File(
+                label="Or upload a notice (.pdf, .docx, or .txt)",
+                file_types=list(SUPPORTED_EXTENSIONS),
+                file_count="single",
+                type="filepath",
+                interactive=True,
+                elem_id="haq-notice-file",
+            )
+            notice_file_status = gr.HTML(
+                value=render_notice_file_status(NOTICE_UPLOAD_HELP),
+                elem_id="haq-notice-file-status",
             )
             notice_input = gr.Textbox(
                 label="Notice text",
@@ -2090,6 +2143,11 @@ def build_app() -> gr.Blocks:
             _handle_notice,
             inputs=[notice_input],
             outputs=[notice_output],
+        )
+        notice_file.change(
+            _handle_notice_upload,
+            inputs=[notice_file],
+            outputs=[notice_input, notice_file_status],
         )
 
     return demo
