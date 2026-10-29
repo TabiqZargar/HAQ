@@ -2256,7 +2256,7 @@ demo = build_app()
 if __name__ == "__main__":
     demo.launch(
         server_name=os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1"),
-        server_port=int(os.environ.get("HAQ_PORT", "7860")),
+        server_port=int(os.environ.get("HAQ_PORT") or os.environ.get("GRADIO_SERVER_PORT") or os.environ.get("PORT") or "7860"),
         share=False,
         show_error=False,
         footer_links=[],
