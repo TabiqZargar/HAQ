@@ -57,6 +57,22 @@ def test_generic_rights_question_abstains(retriever: Retriever) -> None:
     assert retriever.search("what are my rights") == ()
 
 
+def test_single_shared_word_does_not_answer_an_unrelated_question(retriever: Retriever) -> None:
+    assert retriever.search("how do I register a company") == ()
+
+
+def test_one_word_query_still_finds_a_matching_passage(retriever: Retriever) -> None:
+    results = retriever.search("eviction")
+    assert results
+    assert results[0].id == "mta-2021-s21-eviction"
+
+
+def test_two_word_query_with_a_phrase_match_is_still_answered(retriever: Retriever) -> None:
+    results = retriever.search("deposit refund")
+    assert results
+    assert results[0].id == "mta-2021-s11-security-deposit"
+
+
 def test_number_in_question_does_not_match_unrelated_section_number(retriever: Retriever) -> None:
     results = retriever.search("landlord gave me 15 days notice to leave")
     assert results

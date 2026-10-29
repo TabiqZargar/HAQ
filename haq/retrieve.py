@@ -153,6 +153,8 @@ class Retriever:
         self._matrix = self._vectorizer.fit_transform(
             self._document(entry) for entry in self.entries
         )
+        self._feature_names = self._vectorizer.get_feature_names_out()
+        self._doc_terms = tuple(frozenset(row.indices) for row in self._matrix)
 
     @staticmethod
     def _document(entry: RetrievedPassage) -> str:
@@ -162,6 +164,29 @@ class Retriever:
     @property
     def categories(self) -> tuple[str, ...]:
         return tuple(sorted({entry.category for entry in self.entries}))
+
+    def _shares_enough_terms(
+        self,
+        index: int,
+        query_unigrams: set[int],
+        query_phrases: set[int],
+    ) -> bool:
+        """Reject passages that share only one incidental word with the query.
+
+        On a small corpus a single rare token can clear the score threshold while
+        the rest of the question matches nothing (for example "register a company"
+        against a wage-liability passage). A passage must therefore share at least
+        two distinct query words, or one multi-word phrase, with the question. A
+        one-word question is still allowed to match that single word.
+        """
+
+        doc_terms = self._doc_terms[index]
+        unigram_hits = len(query_unigrams & doc_terms)
+        if unigram_hits >= 2:
+            return True
+        if query_phrases & doc_terms:
+            return True
+        return len(query_unigrams) == 1 and unigram_hits == 1
 
     def search(
         self,
@@ -177,12 +202,18 @@ class Retriever:
             return ()
 
         query_vector = self._vectorizer.transform([cleaned])
+        query_features = set(query_vector.nonzero()[1].tolist())
+        query_unigrams = {
+            index for index in query_features if " " not in self._feature_names[index]
+        }
+        query_phrases = query_features - query_unigrams
         scores = cosine_similarity(query_vector, self._matrix).ravel()
         ranked = sorted(enumerate(scores), key=lambda item: item[1], reverse=True)
         candidates = [
             (index, float(score))
             for index, score in ranked
-            if not category or category == "All" or self.entries[index].category == category
+            if (not category or category == "All" or self.entries[index].category == category)
+            and self._shares_enough_terms(index, query_unigrams, query_phrases)
         ]
         if not candidates or candidates[0][1] < self.min_score:
             return ()
