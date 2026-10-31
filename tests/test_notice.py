@@ -53,3 +53,15 @@ def test_extracts_numeric_and_month_first_dates() -> None:
     assert "05/12/2026" in facts.dates
     assert "December 5, 2026" in facts.dates
     assert "by December 5, 2026" in facts.deadline_language
+
+
+def test_extracts_deadline_written_as_a_numeric_calendar_date() -> None:
+    facts = extract_notice_facts("You must vacate the premises on or before 30/11/2026.")
+    assert "30/11/2026" in facts.dates
+    assert "on or before 30/11/2026" in facts.deadline_language
+
+
+def test_extracts_relative_deadline_with_parenthetical_number() -> None:
+    facts = extract_notice_facts("Payment is due within 15 (fifteen) days of this notice.")
+    assert facts.dates == ()
+    assert any("within 15 (fifteen) days" in phrase for phrase in facts.deadline_language)

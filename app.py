@@ -11,6 +11,16 @@ os.environ.setdefault("GRADIO_SERVER_NAME", "127.0.0.1")
 
 import gradio as gr
 
+from haq.ai import (
+    AIAnswer,
+    AIConfigError,
+    AIError,
+    AISettings,
+    ENV_MODEL,
+    answer_question,
+    settings_from_env,
+)
+from haq.documents import DocumentError, SUPPORTED_EXTENSIONS, read_notice_document
 from haq.guide import CATEGORY_LABELS, GuideResult, build_guide, get_retriever
 from haq.notice import NoticeFacts, extract_notice_facts
 
@@ -22,6 +32,12 @@ TOPIC_TO_CATEGORY = {
     "Consumer": "consumer",
     "Unpaid wages": "labour",
 }
+
+NOTICE_UPLOAD_HELP = (
+    "Upload a PDF, DOCX, or TXT file to load its text into the box below. "
+    "Files are read on this computer and are not sent to an external service. "
+    "Scanned PDFs are not OCR'd; if no text can be extracted, paste the text instead."
+)
 
 CSS = """
 :root {
@@ -633,6 +649,100 @@ body, .gradio-container {
   line-height: 1.55;
   margin: 0 0 13px;
   padding: 10px 12px;
+}
+
+.haq-ai-card {
+  background: #f7faf6;
+  border: 1px solid #c9ddcb;
+  border-left: 4px solid var(--haq-green);
+  border-radius: 9px;
+  margin: 0 0 16px;
+  overflow: hidden;
+  padding: 16px 18px;
+}
+
+.haq-ai-header {
+  align-items: center;
+  border-bottom: 1px solid #dbe8dd;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+}
+
+.haq-ai-badge {
+  align-items: center;
+  color: #244b34;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 850;
+  gap: 6px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.haq-ai-dot {
+  background: var(--haq-green);
+  border-radius: 999px;
+  display: inline-block;
+  height: 7px;
+  width: 7px;
+}
+
+.haq-ai-meta {
+  color: var(--haq-muted);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+}
+
+.haq-ai-body {
+  color: var(--haq-on-surface);
+  font-size: 0.95rem;
+  line-height: 1.68;
+}
+
+.haq-ai-body p {
+  color: var(--haq-on-surface);
+  font-size: 0.95rem;
+  line-height: 1.68;
+  margin: 0 0 10px;
+}
+
+.haq-ai-body p:last-child {
+  margin-bottom: 0;
+}
+
+.haq-ai-footer {
+  border-top: 1px dashed #dbe8dd;
+  color: var(--haq-muted);
+  font-size: 0.73rem;
+  line-height: 1.5;
+  margin-top: 12px;
+  padding-top: 8px;
+}
+
+.haq-sources-divider {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin: 18px 0 14px;
+}
+
+.haq-sources-divider-line {
+  background: var(--haq-line-soft);
+  flex: 1;
+  height: 1px;
+}
+
+.haq-sources-divider-label {
+  color: var(--haq-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .haq-source-card {
@@ -1600,7 +1710,7 @@ HERO_INTRO_HTML = """
     <span class="haq-registry-sep" aria-hidden="true">·</span>
     <span>No login needed</span>
   </div>
-  <div class="haq-registry-right">Local-first · No analytics · No external AI</div>
+  <div class="haq-registry-right">Local-first · No analytics · AI runs locally</div>
 </div>
 <div class="haq-hero-copy">
   <div class="haq-seal">Verified-source library · India</div>
@@ -1636,7 +1746,7 @@ FOOTER_HTML = """
       <div class="haq-footer-badges" aria-label="Application qualities">
         <span>Verified library</span>
         <span>Local-first</span>
-        <span>No external AI</span>
+        <span>AI runs locally</span>
       </div>
     </div>
     <div class="haq-footer-bottom">
@@ -1716,24 +1826,86 @@ def _render_source_card(passage) -> str:
     """
 
 
-def render_guide(result: GuideResult) -> str:
+def render_guide(result: GuideResult, *, ai_answer: AIAnswer | None = None, ai_status: str | None = None) -> str:
     if result.abstained:
         body = f"""
           <div class="haq-warning">{_escape(result.message)}</div>
           <div class="haq-empty">
             The guide only answers when it can quote a passage from its small verified library.
-            It does not use an external AI model, invent a section, or calculate a deadline.
+            It never asks an AI model to invent a rule, an authority, or a deadline.
           </div>
         """
         return _result_shell("No verified match", "Local search · no guess", body)
 
     cards = "".join(_render_source_card(passage) for passage in result.passages)
     count_label = "source passage" if len(result.passages) == 1 else "source passages"
-    body = f"""
-      <div class="haq-response-note">{_escape(result.message)}</div>
-      {cards}
-    """
-    return _result_shell("Verified source response", f"{len(result.passages)} {count_label} · local search", body)
+    status_block = ""
+    if ai_status:
+        status_block = f'<div class="haq-warning">{_escape(ai_status)}</div>'
+
+    if ai_answer is not None:
+        paragraphs = "".join(
+            f"<p>{_escape(chunk)}</p>" for chunk in ai_answer.text.split("\n\n") if chunk.strip()
+        )
+        ai_section = f"""
+      <div class="haq-ai-card">
+        <div class="haq-ai-header">
+          <div class="haq-ai-badge">
+            <span class="haq-ai-dot" aria-hidden="true"></span>
+            <strong>AI explanation</strong>
+          </div>
+          <span class="haq-ai-meta">Local model ({_escape(ai_answer.model)}) · Grounded in verified passages below</span>
+        </div>
+        <div class="haq-ai-body">{paragraphs}</div>
+        <div class="haq-ai-footer">
+          General legal information, not legal advice. Always confirm with the verified source passages below.
+        </div>
+      </div>
+      """
+        sources_divider = f"""
+      <div class="haq-sources-divider">
+        <div class="haq-sources-divider-line"></div>
+        <div class="haq-sources-divider-label">Verified library passages ({len(result.passages)})</div>
+        <div class="haq-sources-divider-line"></div>
+      </div>
+      """
+        body = f"""
+          {status_block}
+          {ai_section}
+          {sources_divider}
+          {cards}
+        """
+        meta = f"{len(result.passages)} {count_label} · AI answer + sources"
+    else:
+        body = f"""
+          {status_block}
+          <div class="haq-response-note">{_escape(result.message)}</div>
+          {cards}
+        """
+        meta = f"{len(result.passages)} {count_label} · local search"
+
+    return _result_shell("Verified source response", meta, body)
+
+
+def render_ai_status(settings: AISettings | None = None) -> str:
+    active = settings if settings is not None else settings_from_env()
+    if active.enabled:
+        return (
+            '<div class="haq-empty">'
+            f"Local AI mode is configured ({_escape(active.describe)}) and stays off until you "
+            "tick the box. Ticking it sends your question and the retrieved passages to the "
+            "Ollama model running on this computer. Notices and uploaded files are never sent."
+            "</div>"
+        )
+    return (
+        '<div class="haq-empty">'
+        "Local AI mode is not configured, so this app uses local search only. "
+        f"{_escape(active.problem)} "
+        "To enable it, start Ollama and set "
+        f"{_escape(ENV_MODEL)} to a tag shown by <code>ollama list</code>. "
+        "Notices and uploaded files are never sent to an AI model."
+        "</div>"
+    )
 
 
 def render_notice(facts: NoticeFacts, original: str) -> str:
@@ -1779,6 +1951,11 @@ def render_notice(facts: NoticeFacts, original: str) -> str:
     return _result_shell("Explicit text matches", "No legal conclusion", body)
 
 
+def render_notice_file_status(message: str, *, warning: bool = False) -> str:
+    css_class = "haq-warning" if warning else "haq-empty"
+    return f'<div class="{css_class}">{_escape(message)}</div>'
+
+
 def render_empty_guide() -> str:
     body = """
     <div class="haq-empty">
@@ -1786,7 +1963,7 @@ def render_empty_guide() -> str:
       Choose a topic to narrow the search, or leave it on “All topics”.
     </div>
     """
-    return _result_shell("Ready when you are", "No external AI", body, empty=True)
+    return _result_shell("Ready when you are", "AI off by default", body, empty=True)
 
 
 def render_how_it_works() -> str:
@@ -1836,7 +2013,7 @@ def render_tools() -> str:
             <span class="haq-tool-index">02 · Notice</span>
             <h3>Notice decoder</h3>
             <p class="haq-tool-deco">नोटिस अनुवादक</p>
-            <p>Paste notice text. The decoder extracts only explicit dates, amounts, parties, reference numbers, and deadline language.</p>
+            <p>Paste notice text or upload a PDF, DOCX, or TXT file. The decoder extracts only explicit dates, amounts, parties, reference numbers, and deadline language.</p>
           </div>
           <span class="haq-tool-link">Open notice decoder <span aria-hidden="true">→</span></span>
         </a>
@@ -1887,7 +2064,7 @@ def render_honesty() -> str:
         <article class="haq-honesty-card">
           <span>03</span>
           <h3>No hidden calculations</h3>
-          <p>The notice decoder extracts explicit text only. It does not calculate, convert, or infer a deadline.</p>
+          <p>The notice decoder extracts explicit text only from pasted or uploaded text. It does not OCR scanned pages, calculate, convert, or infer a deadline.</p>
         </article>
       </div>
       <p class="haq-honesty-note">
@@ -1905,9 +2082,10 @@ def render_privacy() -> str:
         <div class="haq-eyebrow">Privacy, in plain words</div>
         <h2 id="privacy-title">Your privacy is part of the architecture.</h2>
         <p>
-          Haq Guide runs as a local Gradio app. It does not use analytics, an external AI API,
-          or an account system. Source links open only when you click them. The app makes no
-          application-level external requests during retrieval or notice decoding.
+          Haq Guide runs as a local Gradio app. It does not use analytics or an account system,
+          and retrieval and notice decoding work without any external service. Local AI mode is off by default. If you configure a local Ollama model and tick the consent box, only your question and the retrieved passages are sent to that local model. Uploaded notice files are read on
+          this computer and are never sent to an AI model. Source links open only when you
+          click them.
         </p>
       </div>
       <div class="haq-privacy-stats" aria-label="Privacy facts">
@@ -1988,13 +2166,74 @@ def render_sources() -> str:
     """
 
 
-def _handle_guide(query: str, topic_label: str) -> str:
+def _handle_guide(
+    query: str,
+    topic_label: str,
+    use_ai: bool = False,
+    *,
+    settings: AISettings | None = None,
+    transport=None,
+) -> str:
     category = TOPIC_TO_CATEGORY.get(topic_label, "All")
-    return render_guide(build_guide(query, category=category))
+    result = build_guide(query, category=category)
+    if not use_ai:
+        return render_guide(result)
+    if result.abstained:
+        return render_guide(
+            result,
+            ai_status="No verified passage matched, so no AI request was made.",
+        )
+    try:
+        answer = answer_question(
+            result.query,
+            result.passages,
+            settings=settings,
+            transport=transport,
+        )
+    except AIConfigError:
+        return render_guide(
+            result,
+            ai_status=(
+                "Local AI mode is not configured. Showing local retrieval only; see the "
+                "status note above the results."
+            ),
+        )
+    except AIError as exc:
+        return render_guide(
+            result, ai_status=f"AI answer unavailable: {exc} Showing local retrieval only."
+        )
+    return render_guide(result, ai_answer=answer)
 
 
 def _handle_notice(text: str) -> str:
     return render_notice(extract_notice_facts(text), text)
+
+
+def _handle_notice_upload(file_value):
+    if file_value in (None, "", []):
+        return gr.skip(), render_notice_file_status(NOTICE_UPLOAD_HELP)
+    try:
+        document = read_notice_document(file_value)
+    except DocumentError as exc:
+        return gr.skip(), render_notice_file_status(str(exc), warning=True)
+    except Exception:
+        return gr.skip(), render_notice_file_status(
+            "This file could not be read. Upload a different PDF, DOCX, or TXT file.",
+            warning=True,
+        )
+
+    details = [f"Loaded {document.kind}"]
+    if document.pages is not None:
+        details.append(f"{document.pages} page(s)")
+    details.append(f"{len(document.text):,} characters")
+    message = (
+        " · ".join(details)
+        + ". Review the text above, then extract explicit facts. "
+        "Nothing was sent to an external service."
+    )
+    if document.warnings:
+        message = message + " " + " ".join(document.warnings)
+    return document.text, render_notice_file_status(message, warning=bool(document.warnings))
 
 
 def build_app() -> gr.Blocks:
@@ -2028,6 +2267,16 @@ def build_app() -> gr.Blocks:
                         variant="primary",
                         elem_id="haq-ask-button",
                     )
+                    ai_consent = gr.Checkbox(
+                        label="Ask the local Ollama model for an explanation",
+                        info=(
+                            "Off by default. Runs on this computer and sends only your question and the "
+                            "retrieved passages to localhost. Notices and uploaded files are never sent."
+                        ),
+                        value=False,
+                        elem_id="haq-ai-consent",
+                    )
+            gr.HTML(render_ai_status(), elem_id="haq-ai-status")
             gr.HTML(render_how_it_works())
             guide_output = gr.HTML(value=render_empty_guide(), elem_id="haq-guide-output")
 
@@ -2038,8 +2287,21 @@ def build_app() -> gr.Blocks:
                 _section_head(
                     "02 · Notice",
                     "Decode a notice",
-                    "Paste a notice to pull out only what it explicitly says. No dates are calculated.",
+                    "Paste a notice or upload a PDF, DOCX, or TXT file. Only what the text "
+                    "explicitly says is shown. No dates are calculated, and scanned PDFs are not OCR'd.",
                 )
+            )
+            notice_file = gr.File(
+                label="Or upload a notice (.pdf, .docx, or .txt)",
+                file_types=list(SUPPORTED_EXTENSIONS),
+                file_count="single",
+                type="filepath",
+                interactive=True,
+                elem_id="haq-notice-file",
+            )
+            notice_file_status = gr.HTML(
+                value=render_notice_file_status(NOTICE_UPLOAD_HELP),
+                elem_id="haq-notice-file-status",
             )
             notice_input = gr.Textbox(
                 label="Notice text",
@@ -2078,18 +2340,23 @@ def build_app() -> gr.Blocks:
 
         ask_button.click(
             _handle_guide,
-            inputs=[query, topic],
+            inputs=[query, topic, ai_consent],
             outputs=[guide_output],
         )
         query.submit(
             _handle_guide,
-            inputs=[query, topic],
+            inputs=[query, topic, ai_consent],
             outputs=[guide_output],
         )
         notice_button.click(
             _handle_notice,
             inputs=[notice_input],
             outputs=[notice_output],
+        )
+        notice_file.change(
+            _handle_notice_upload,
+            inputs=[notice_file],
+            outputs=[notice_input, notice_file_status],
         )
 
     return demo
@@ -2101,7 +2368,7 @@ demo = build_app()
 if __name__ == "__main__":
     demo.launch(
         server_name=os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1"),
-        server_port=int(os.environ.get("HAQ_PORT", "7860")),
+        server_port=int(os.environ.get("HAQ_PORT") or os.environ.get("GRADIO_SERVER_PORT") or os.environ.get("PORT") or "7860"),
         share=False,
         show_error=False,
         footer_links=[],
