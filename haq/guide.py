@@ -4,8 +4,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
+from pathlib import Path
+from threading import RLock
 
-from haq.retrieve import Retriever, RetrievedPassage
+from haq.retrieve import (
+    DEFAULT_LIBRARY_DIR,
+    Retriever,
+    RetrievedPassage,
+    library_signature,
+)
 
 CATEGORY_LABELS = {
     "All": "All topics",
@@ -34,9 +41,30 @@ class GuideResult:
         return tuple(passage.id for passage in self.passages)
 
 
-@lru_cache(maxsize=1)
-def get_retriever() -> Retriever:
-    return Retriever()
+_RETRIEVER_LOCK = RLock()
+
+
+@lru_cache(maxsize=4)
+def _cached_retriever(
+    library_dir: str, _signature: tuple[tuple[str, int, int], ...]
+) -> Retriever:
+    return Retriever(library_dir=library_dir)
+
+
+def get_retriever(library_dir: Path | str = DEFAULT_LIBRARY_DIR) -> Retriever:
+    """Return a cached immutable index, rebuilding it when source files change."""
+
+    root = Path(library_dir)
+    signature = library_signature(root)
+    with _RETRIEVER_LOCK:
+        return _cached_retriever(str(root.resolve()), signature)
+
+
+def clear_retriever_cache() -> None:
+    """Drop cached retrievers; primarily useful for tests and development."""
+
+    with _RETRIEVER_LOCK:
+        _cached_retriever.cache_clear()
 
 
 def build_guide(

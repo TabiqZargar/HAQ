@@ -42,7 +42,7 @@ _DEADLINE_PATTERNS = (
         r"\b(?:within|before|by|on\s+or\s+before|no\s+later\s+than|"
         r"not\s+later\s+than|latest\s+by)\s+(?:the\s+)?"
         r"(?:\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|"
-        r"eleven|twelve|fifteen|twenty|thirty|forty|sixty|ninety)\s+"
+        r"eleven|twelve|fifteen|twenty|thirty|forty|sixty|ninety)"
         r"(?:\s*\(\d{1,3}\))?\s+"
         r"(?:working\s+)?(?:days?|weeks?|months?|years?)"
         r"(?:\s+(?:of|from|after)\s+[^.;\n]{1,100})?",

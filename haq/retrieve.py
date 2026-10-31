@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import json
+import os
+from collections import OrderedDict
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
+from threading import RLock
 from typing import Iterable, Sequence
 
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS, TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 REQUIRED_FIELDS = (
     "id",
@@ -99,16 +102,43 @@ def _entry_from_mapping(entry: dict) -> RetrievedPassage:
     )
 
 
-def load_entries(library_dir: Path | str = DEFAULT_LIBRARY_DIR) -> tuple[RetrievedPassage, ...]:
-    """Load and validate every JSON source list under the law library."""
+def library_signature(
+    library_dir: Path | str = DEFAULT_LIBRARY_DIR,
+) -> tuple[tuple[str, int, int], ...]:
+    """Return a cheap fingerprint that changes when source files change."""
 
     root = Path(library_dir)
     if not root.exists():
         raise FileNotFoundError(f"Law library not found: {root}")
 
+    signature: list[tuple[str, int, int]] = []
+    with os.scandir(root) as categories:
+        for category in categories:
+            if not category.is_dir():
+                continue
+            with os.scandir(category.path) as files:
+                for file in files:
+                    if not file.name.endswith(".json"):
+                        continue
+                    stat = file.stat()
+                    signature.append(
+                        (
+                            f"{category.name}/{file.name}",
+                            stat.st_mtime_ns,
+                            stat.st_size,
+                        )
+                    )
+    signature.sort()
+    return tuple(signature)
+
+
+@lru_cache(maxsize=8)
+def _load_entries_cached(
+    root: str, _signature: tuple[tuple[str, int, int], ...]
+) -> tuple[RetrievedPassage, ...]:
     entries: list[RetrievedPassage] = []
     seen_ids: set[str] = set()
-    for path in sorted(root.glob("*/*.json")):
+    for path in sorted(Path(root).glob("*/*.json")):
         with path.open(encoding="utf-8") as handle:
             data = json.load(handle)
         if not isinstance(data, list):
@@ -127,6 +157,14 @@ def load_entries(library_dir: Path | str = DEFAULT_LIBRARY_DIR) -> tuple[Retriev
     return tuple(entries)
 
 
+def load_entries(library_dir: Path | str = DEFAULT_LIBRARY_DIR) -> tuple[RetrievedPassage, ...]:
+    """Load and validate every JSON source list under the law library."""
+
+    root = Path(library_dir)
+    signature = library_signature(root)
+    return _load_entries_cached(str(root.resolve()), signature)
+
+
 class Retriever:
     """TF-IDF cosine-similarity search over verified excerpts."""
 
@@ -137,12 +175,18 @@ class Retriever:
         library_dir: Path | str = DEFAULT_LIBRARY_DIR,
         min_score: float = DEFAULT_MIN_SCORE,
         relative_score: float = DEFAULT_RELATIVE_SCORE,
+        query_cache_size: int = 128,
     ) -> None:
         self.entries = tuple(entries) if entries is not None else load_entries(library_dir)
         if not self.entries:
             raise ValueError("Retriever requires at least one entry")
         self.min_score = min_score
         self.relative_score = relative_score
+        self._query_cache_size = max(0, query_cache_size)
+        self._query_cache: OrderedDict[
+            tuple[str, str, int], tuple[RetrievedPassage, ...]
+        ] = OrderedDict()
+        self._query_cache_lock = RLock()
         self._vectorizer = TfidfVectorizer(
             lowercase=True,
             stop_words=list(ENGLISH_STOP_WORDS | GENERIC_QUERY_WORDS),
@@ -153,6 +197,13 @@ class Retriever:
         self._matrix = self._vectorizer.fit_transform(
             self._document(entry) for entry in self.entries
         )
+        indices_by_category: dict[str, list[int]] = {}
+        for index, entry in enumerate(self.entries):
+            indices_by_category.setdefault(entry.category, []).append(index)
+        self._all_indices = tuple(range(len(self.entries)))
+        self._indices_by_category = {
+            category: tuple(indices) for category, indices in indices_by_category.items()
+        }
 
     @staticmethod
     def _document(entry: RetrievedPassage) -> str:
@@ -162,6 +213,12 @@ class Retriever:
     @property
     def categories(self) -> tuple[str, ...]:
         return tuple(sorted({entry.category for entry in self.entries}))
+
+    def clear_query_cache(self) -> None:
+        """Drop cached results for this immutable index."""
+
+        with self._query_cache_lock:
+            self._query_cache.clear()
 
     def search(
         self,
@@ -176,44 +233,65 @@ class Retriever:
         if not cleaned or top_k < 1:
             return ()
 
-        query_vector = self._vectorizer.transform([cleaned])
-        scores = cosine_similarity(query_vector, self._matrix).ravel()
-        ranked = sorted(enumerate(scores), key=lambda item: item[1], reverse=True)
-        candidates = [
-            (index, float(score))
-            for index, score in ranked
-            if not category or category == "All" or self.entries[index].category == category
-        ]
-        if not candidates or candidates[0][1] < self.min_score:
-            return ()
+        cache_key = (cleaned, category or "", top_k)
+        if self._query_cache_size:
+            with self._query_cache_lock:
+                cached = self._query_cache.get(cache_key)
+                if cached is not None:
+                    self._query_cache.move_to_end(cache_key)
+                    return cached
 
-        relative_floor = max(self.min_score, candidates[0][1] * self.relative_score)
-        results: list[RetrievedPassage] = []
-        for index, score in candidates:
-            if score < relative_floor:
-                break
-            entry = self.entries[index]
-            results.append(
-                RetrievedPassage(
-                    id=entry.id,
-                    title=entry.title,
-                    section=entry.section,
-                    jurisdiction=entry.jurisdiction,
-                    source_url=entry.source_url,
-                    collection_date=entry.collection_date,
-                    verification_status=entry.verification_status,
-                    category=entry.category,
-                    source_type=entry.source_type,
-                    topic_tags=entry.topic_tags,
-                    text=entry.text,
-                    plain_summary=entry.plain_summary,
-                    applicability_note=entry.applicability_note,
-                    score=float(score),
-                )
-            )
-            if len(results) >= top_k:
-                break
-        return tuple(results)
+        if not category or category == "All":
+            candidate_indices = self._all_indices
+        else:
+            candidate_indices = self._indices_by_category.get(category, ())
+
+        query_vector = self._vectorizer.transform([cleaned])
+        if not candidate_indices:
+            results: tuple[RetrievedPassage, ...] = ()
+        else:
+            scores = (self._matrix @ query_vector.T).toarray().ravel()
+            ranked = sorted(candidate_indices, key=scores.__getitem__, reverse=True)
+            top_score = float(scores[ranked[0]])
+            if top_score < self.min_score:
+                results = ()
+            else:
+                relative_floor = max(self.min_score, top_score * self.relative_score)
+                selected: list[RetrievedPassage] = []
+                for index in ranked:
+                    score = float(scores[index])
+                    if score < relative_floor:
+                        break
+                    entry = self.entries[index]
+                    selected.append(
+                        RetrievedPassage(
+                            id=entry.id,
+                            title=entry.title,
+                            section=entry.section,
+                            jurisdiction=entry.jurisdiction,
+                            source_url=entry.source_url,
+                            collection_date=entry.collection_date,
+                            verification_status=entry.verification_status,
+                            category=entry.category,
+                            source_type=entry.source_type,
+                            topic_tags=entry.topic_tags,
+                            text=entry.text,
+                            plain_summary=entry.plain_summary,
+                            applicability_note=entry.applicability_note,
+                            score=score,
+                        )
+                    )
+                    if len(selected) >= top_k:
+                        break
+                results = tuple(selected)
+
+        if self._query_cache_size:
+            with self._query_cache_lock:
+                self._query_cache[cache_key] = results
+                self._query_cache.move_to_end(cache_key)
+                while len(self._query_cache) > self._query_cache_size:
+                    self._query_cache.popitem(last=False)
+        return results
 
     def source_ids(self) -> Iterable[str]:
         return (entry.id for entry in self.entries)
